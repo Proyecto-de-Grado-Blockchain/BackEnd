@@ -230,17 +230,11 @@ h2 {
 /*CSS para Home */ /*CSS para Home */ /*CSS para Home */ /*CSS para Home */
 
 /*CSS para Home */ /*CSS para Home */ /*CSS para Home */ /*CSS para Home */
-html, body {
-  height: 100%;
-  margin: 0;
-}
 
 .container-fluid {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Asegura que el contenedor ocupe al menos la altura de la ventana */
-  padding: 0;
-  overflow: hidden; /* Evita el scroll en el contenedor */
+  min-height: 0; /* Asegura que el contenedor ocupe al menos la altura de la ventana */
 }
 
 .content {
@@ -253,7 +247,7 @@ html, body {
   background-color: rgba(134, 193, 39, 1);
   height: 20px;
   width: 100%;
-  margin-top: auto; /* Empuja la margen verde hacia el final de la pantalla */
+  position: relative;
 }
 
 /* Otros estilos existentes */
@@ -271,71 +265,7 @@ html, body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilo para la imagen del menú que abre/cierra el menú */
-.menu-icon {
-  width: 24px; /* Ajusta el ancho según lo que necesites */
-  height: 24px; /* Ajusta la altura según lo que necesites */
-  cursor: pointer; /* Cambia el cursor a una mano al pasar sobre la imagen */
-}
-
-/* Contenedor del menú para posicionar el menú desplegable */
-.menu-container {
-  position: relative; /* Necesario para que el menú se posicione en relación con este contenedor */
-}
-
-/* Menú desplegable */
-.menu-dropdown {
-  position: fixed; /* Posiciona el menú fijo en la pantalla */
-  top: 129px; /* Empieza justo debajo del contenedor superior (ajustar según altura real) */
-  right: 0; /* Alinea el menú al lado derecho de la pantalla */
-  width: 200px; /* Ajusta el ancho del menú si es necesario */
-  height: calc(100vh - 129px); /* Ajusta la altura del menú al tamaño de la ventana */
-  background-color: #f8f9fa; /* Color de fondo del menú */
-  border: 1px solid #dee2e6; /* Borde del menú */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
-  opacity: 0; /* Oculta el menú por defecto */
-  visibility: hidden; /* Hace que el menú no sea visible por defecto */
-  transform: translateX(100%); /* Inicialmente fuera de la pantalla a la derecha */
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 1000; /* Asegura que el menú esté sobre otros contenidos */
-  overflow-y: auto; /* Permite el desplazamiento vertical si el contenido es mayor que la altura */
-}
-
-/* Estilo para el menú cuando está abierto */
-.menu-open {
-  opacity: 1; 
-  visibility: visible; /* Hace que el menú sea visible */
-  transform: translateX(0); 
-}
-
-/* Estilo para el menú cuando está cerrado */
-.menu-closed {
-  opacity: 0; 
-  visibility: hidden; /* Hace que el menú no sea visible */
-  transform: translateX(100%); 
-}
-
-.logout-btn {
-  border-top: 1px solid #ddd; /* Línea superior del botón */
-}
-
-.date-time-container {
-  display: flex;
-  flex-direction: column; 
-  align-items: flex-end; 
-  margin-right: 20px; 
-}
-
-.date {
-  font-size: 15px; 
-  font-weight: bold; 
-}
-
-.time {
-  font-size: 13px; 
-  color: gray; 
-}
-
+/* Estilo para los módulos principales */
 .modules-container {
   display: flex;
   flex-direction: row; /* Alinea los módulos horizontalmente */
@@ -385,5 +315,339 @@ html, body {
   height: 140px; /* Altura fija para el carrusel, ajusta según tus necesidades */
   overflow: hidden; /* Oculta el contenido que se desborda */
   position: relative; /* Posiciona el carrusel en relación con su contenedor */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para el carrusel */
+  box-shadow: 0 4px 8px rgba(52, 247, 3, 0.2); /* Sombra para el carrusel */
 }
+
+/* FRANJA */
+
+/* Franja.css */
+
+/* Estilo para el contenedor principal del componente Franja */
+.franja-container {
+  display: flex;
+  height: 100hv; /* Mantiene el componente Franja en su altura natural */
+}
+
+/* Barra superior de Franja */
+.franja-header {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  height: 110px;
+  box-sizing: border-box;
+}
+
+/* Contenedor para el contenido de la cabecera */
+.franja-header-content {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Estilo para el logo en la cabecera */
+.franja-logo img {
+  height: 80px; /* Altura del logo */
+}
+
+/* Estilo para el título en la cabecera */
+.franja-title {
+  text-align: center;
+  flex: 1;
+}
+
+.franja-title h2 {
+  font-size: 30px;
+  color: #333;
+  margin: 0;
+}
+
+/* Contenedor para el menú y la fecha/hora */
+.franja-menu-date {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Estilo para el icono del menú */
+.menu-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  margin-left: 40px;
+  margin-right: 30px;
+}
+
+/* Menú desplegable */
+.menu-dropdown {
+  position: fixed;
+  top: 110px; /* Empieza justo debajo de la cabecera */
+  right: 0;
+  width: 270px;
+  height: calc(100vh - 110px);
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(100%);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1000;
+}
+
+/* Estilo para el menú cuando está abierto */
+.menu-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+/* Línea vertical en el menú desplegable */
+.menu-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: rgba(20, 64, 49, 1);
+}
+
+/* Estilo para los ítems del menú */
+.nav-item {
+  margin: 10px 0;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  border-bottom: 1px solid #dee2e6;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.nav-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 15px;
+}
+
+.nav-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.nav-title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.nav-description {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.logout-btn {
+  border-top: 1px solid #ddd;
+  margin-top: auto;
+}
+
+/* Contenedor para la fecha y la hora */
+.date-time-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.date {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.time {
+  font-size: 13px;
+  color: gray;
+}
+
+/* CSS para Casos Activos */
+
+.container-activos {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Asegura que el contenedor ocupe al menos toda la altura de la ventana */
+}
+
+.content {
+  flex: 1; /* Hace que el contenido ocupe todo el espacio disponible menos el espacio del margen */
+}
+
+.activos-margin {
+  background-color: rgba(134, 193, 39, 1);
+  height: 20px; /* Ajusta la altura según sea necesario */
+  width: 100%;
+}
+
+.casos-activos-container {
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 30px; 
+  position: relative; 
+}
+
+.casos-activos-container::before,
+.casos-activos-container::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px; /* Altura de la línea divisoria */
+  background-color: #ccc; /* Color de la línea divisoria */
+}
+
+.casos-activos-container::before {
+  top: 0; /* Línea divisoria en la parte superior */
+}
+
+.casos-activos-container::after {
+  bottom: 0; /* Línea divisoria en la parte inferior */
+}
+
+.casos-activos-container h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.casos-activos-container p {
+  font-size: 16px;
+  color: #333;
+}
+
+.input-container {
+  display: flex;
+  justify-content: center; /* Centra los inputs horizontalmente */
+  gap: 20px; /* Espacio entre los inputs */
+  margin-top: 20px;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 400px; /* Ancho fijo para los inputs */
+  height: 56px; /* Altura fija para los inputs */
+}
+
+.input-wrapper input {
+  width: 100%; /* Hace que el input ocupe todo el ancho del wrapper */
+  height: 100%; /* Hace que el input ocupe toda la altura del wrapper */
+  padding: 10px;
+  padding-left: 40px; /* Espacio para el ícono de la lupa */
+  padding-right: 40px; /* Espacio para el ícono del menú */
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0; /* Gris claro */
+  box-sizing: border-box; /* Incluye padding y border en el ancho total */
+}
+
+.search-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.menu-icon-input {
+  position: absolute;
+  right: 10px; /* Ajusta la posición del ícono del menú dentro del input */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.dropdown-menu button {
+  padding: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.dropdown-menu button:hover {
+  background-color: #f0f0f0;
+}
+
+.estado-options {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 5px 0;
+}
+
+.estado-options label {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.estado-options input {
+  margin-right: 8px;
+}
+
+
+/* Estilos para la tabla */
+.tabla-container {
+  margin-top: 40px; /* Espacio entre los inputs y la tabla */
+  display: flex;
+  justify-content: center; /* Centra la tabla horizontalmente */
+  width: 100%;
+}
+
+table {
+  border-collapse: collapse;
+  width: 80%; /* Ajusta este valor según el tamaño deseado */
+  max-width: 1200px; /* Ancho máximo para la tabla */
+  background-color: white;
+  border: 1px solid #ccc;
+}
+
+th, td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+.VerDetalle {
+  background-color: #4CAF50; /* Verde */
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}
+

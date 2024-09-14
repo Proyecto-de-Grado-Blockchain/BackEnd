@@ -1,7 +1,10 @@
 import './App.css';
 import { Login } from './componentes/Login';
+import { Home } from './componentes/Home';
+import {CasosActivos} from './componentes/CasosActivos'; 
+import {CasosCerrados} from './componentes/CasosCerrados'; 
+import {Ayuda} from './componentes/Ayuda'; 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import {Home} from './componentes/Home';
 
 function App() {
   return (
@@ -10,7 +13,10 @@ function App() {
         <header className="App-header">
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/home" element={<Home />} />
+            <Route path="/home" element={<Home/>} />
+            <Route path="/casos-activos" element={<CasosActivos/>} />
+            <Route path="/casos-cerrados" element={<CasosCerrados/>} />
+            <Route path="/centro-ayuda" element={<Ayuda/>} />
           </Routes>
         </header>
       </div>
