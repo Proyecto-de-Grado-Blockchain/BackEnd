@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
 import Franja from './Franja'; 
 import menu from '../imagenes/menu.png'; 
 import lupa from '../imagenes/lupa.png'; 
@@ -106,7 +107,9 @@ export const CasosActivos = () => {
             <div className="content">
                 <div className="casos-activos-container">
                     <h2>Gestión de Casos Activos</h2>
-                    <p>En esta sección, puedes ver y gestionar todos los casos forenses que están actualmente en curso.</p>
+                    <p>En esta sección, puedes ver y gestionar todos los casos forenses que están actualmente en curso.
+                        Filtra y accede a cada caso para obtener información detallada, realizar actualizaciones, asignar 
+                        responsabilidades o cambiar el estado de cada proceso.</p>
                 </div>
 
                 {/* Inputs con íconos */}
@@ -213,7 +216,9 @@ export const CasosActivos = () => {
                                         <td>{caso.estado}</td>
                                         <td>{caso.medico}</td>
                                         <td>
+                                        <Link to="/detalle-casos">
                                             <button className='VerDetalle' onClick={() => handleVerDetalle(caso.numero)}>Ver Detalle</button>
+                                        </Link>
                                         </td>
                                     </tr>
                                 ))}

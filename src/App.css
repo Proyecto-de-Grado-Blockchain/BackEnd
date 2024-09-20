@@ -474,6 +474,8 @@ h2 {
 }
 
 /* CSS para Casos Activos */
+/* CSS para Casos Activos */
+/* CSS para Casos Activos */
 
 .container-activos {
   display: flex;
@@ -651,3 +653,253 @@ th {
   cursor: pointer;
 }
 
+
+/*  CSS PARA DETALLE CASOS */
+/*  CSS PARA DETALLE CASOS */
+/*  CSS PARA DETALLE CASOS */
+
+.container-casos-detalle {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Contenido de la ventana */
+.content-detalle {
+  flex: 1;
+  margin-left: 2%; 
+  margin-right: 2%;
+}
+
+.casos-detalle-container {
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 30px; 
+  position: relative; 
+}
+
+.casos-detalle-container::before,
+.casos-detalle-container::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px; /* Altura de la línea divisoria */
+  background-color: gray;
+}
+
+.casos-detalle-container::before {
+  top: 0; /* Línea divisoria en la parte superior */
+}
+
+.casos-detalle-container::after {
+  bottom: 0; /* Línea divisoria en la parte inferior */
+}
+
+.casos-detalle-container h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.casos-detalle-container p {
+  font-size: 16px;
+  color: #333;
+}
+
+.detalle-caso-container {
+  display: flex; /* Mantener en flex para que tabla y botones estén en la misma fila */
+  justify-content: center; /* Centra el contenido horizontalmente */
+  align-items: flex-start; /* Alinea la parte superior de los elementos */
+  margin-top: 20px; /* Margen superior */
+}
+
+.detalle-caso-tabla {
+    width: 50%; /* Usar el 100% del contenedor */
+    border-collapse: collapse; /* Eliminar espacios entre celdas */
+    margin-top: 10px; /* Espacio superior */
+}
+
+.detalle-caso-tabla th,
+.detalle-caso-tabla td {
+    border: 1px solid #ccc; /* Bordes de la tabla */
+    padding: 12px; /* Espaciado interno */
+    text-align: left; /* Alinear texto a la izquierda */
+}
+
+.detalle-caso-tabla th {
+    background-color: rgb(47, 59, 55); /* Color de fondo para el encabezado */
+    color: white; /* Color de texto para el encabezado */
+    font-weight: bold; /* Negrita para el encabezado */
+}
+
+.detalle-caso-tabla tr:nth-child(even) {
+    background-color: #f2f2f2; /* Color de fondo alternado para las filas */
+}
+
+.detalle-caso-tabla tr:hover {
+    background-color: rgba(134, 193, 39, 0.3); /* Efecto hover para las filas */
+    transition: background-color 0.3s; /* Suaviza la transición */
+}
+
+.detalle-caso-tabla td {
+    font-size: 14px; /* Ajusta el tamaño de la fuente */
+    color: #333; /* Color de texto */
+}
+
+
+.detalle-caso-botones {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Asegura que se alineen al inicio */
+}
+
+.boton-con-upload {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px; /* Espacio entre botones */
+}
+
+.boton-principal {
+  width: 239px;
+  height: 24px;
+  background-color: rgba(20, 64, 49, 1);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 5px; /* Espacio entre el botón principal y el de upload */
+}
+
+.boton-principal:hover {
+  background-color: rgba(15, 48, 37, 1);
+}
+
+.boton-upload {
+  width: 38px;
+  height: 34px;
+  background-color: rgba(20, 64, 49, 1); /* Color de fondo */
+  border: none; 
+  cursor: pointer;
+  display: flex; /* Para centrar la imagen */
+  justify-content: center;
+  align-items: center;
+}
+
+.boton-upload img {
+  width: 20px; /* Ajusta según sea necesario */
+  height: auto; /* Mantiene la proporción de la imagen */
+}
+
+.detalle-margin {
+  background-color: rgba(134, 193, 39, 1);
+  height: 20px; /* Ajusta la altura según sea necesario */
+  width: 100%;
+}
+
+/* Estilos para el historial del caso */
+.historial-caso-container {
+  margin-top: 20px; /* Espacio superior */
+}
+
+.input-boton-container {
+  display: flex;
+  justify-content: space-between; /* Espacio entre el input y el botón */
+  align-items: center;
+  margin-bottom: 10px; /* Espacio inferior */
+}
+
+.buscar-container {
+  display: flex;
+  align-items: center;
+  flex-grow: 1; /* Hace que el contenedor ocupe el espacio disponible */
+}
+
+.buscar-container input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  flex-grow: 1; /* Hace que el input ocupe el espacio disponible */
+  margin-right: 5px; /* Espacio entre el input y el botón */
+}
+
+.buscar-boton {
+  background: none; /* Sin fondo */
+  border: none; /* Sin borde */
+  cursor: pointer; /* Cursor en forma de puntero */
+  padding: 0; /* Sin padding */
+}
+
+.buscar-boton img {
+  width: 20px; /* Ajusta el tamaño de la imagen */
+  height: 20px; /* Ajusta el tamaño de la imagen */
+}
+
+.historial-caso-tabla {
+  width: 100%;
+  margin: auto;
+  border-collapse: collapse; /* Para quitar el espacio entre celdas */
+}
+
+.historial-caso-tabla th,
+.historial-caso-tabla td {
+  border: 1px solid #ccc; /* Bordes para la tabla */
+  padding: 8px;
+  text-align: center;
+}
+
+.historial-caso-tabla th {
+  background-color: rgba(20, 64, 49, 1); /* Color de fondo para el encabezado */
+  color: white; /* Color de texto para el encabezado */
+}
+
+.historial-caso-container h4 {
+  margin-right: 50%; /* Ajusta el valor según sea necesario */
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  width: 300px; /* Ajusta el ancho según sea necesario */
+}
+
+.modal-content h4 {
+  margin-bottom: 15px;
+}
+
+.modal-content input {
+  width: 100%;
+  height: 200px;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+.modal-content button {
+  margin-right: 10px;
+}
+
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}

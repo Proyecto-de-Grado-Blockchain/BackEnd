@@ -4,6 +4,7 @@ import { Home } from './componentes/Home';
 import {CasosActivos} from './componentes/CasosActivos'; 
 import {CasosCerrados} from './componentes/CasosCerrados'; 
 import {Ayuda} from './componentes/Ayuda'; 
+import {DetalleCasos} from './componentes/DetalleCasos'; 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
             <Route path="/casos-activos" element={<CasosActivos/>} />
             <Route path="/casos-cerrados" element={<CasosCerrados/>} />
             <Route path="/centro-ayuda" element={<Ayuda/>} />
+            <Route path="/detalle-casos" element={<DetalleCasos/>} />
           </Routes>
         </header>
       </div>
