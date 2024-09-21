@@ -18,6 +18,9 @@ export const CasosActivos = () => {
     const [estado, setEstado] = useState('');
     const [casos, setCasos] = useState([]);
 
+    const handleUploadClick = () => {
+        navigate('/ruta-a-otro-lado'); // Cambia esto a la ruta deseada
+    };
     const navigate = useNavigate();
 
     const toggleMenu = (menu) => {
@@ -59,6 +62,7 @@ export const CasosActivos = () => {
             setInputValue1(value);
         }
     };
+
 
     const handleChangeInput2 = (e) => {
         const value = e.target.value;

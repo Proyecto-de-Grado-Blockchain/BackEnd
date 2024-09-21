@@ -5,6 +5,7 @@ import {CasosActivos} from './componentes/CasosActivos';
 import {CasosCerrados} from './componentes/CasosCerrados'; 
 import {Ayuda} from './componentes/Ayuda'; 
 import {DetalleCasos} from './componentes/DetalleCasos'; 
+import {DocumentosExistentes} from './componentes/DocumentosExistentes'; 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
             <Route path="/casos-cerrados" element={<CasosCerrados/>} />
             <Route path="/centro-ayuda" element={<Ayuda/>} />
             <Route path="/detalle-casos" element={<DetalleCasos/>} />
+            <Route path="/Documentos-existentes" element={<DocumentosExistentes/>} />
           </Routes>
         </header>
       </div>

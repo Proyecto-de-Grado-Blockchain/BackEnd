@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import Franja from './Franja'; 
+import { Link } from 'react-router-dom';
 import upload from '../imagenes/upload.png';
 import lupa from '../imagenes/lupa.png'; 
 import doc from '../imagenes/doc.png'; 
@@ -19,6 +20,12 @@ export const DetalleCasos = () => {
         forense: 'Dr. Smith',
         ultimaActualizacion: '2024-09-15',
     };
+
+    const handleUploadClick = () => {
+        navigate('/rut  a-a-otro-lado'); // Cambia esto a la ruta deseada
+    };
+
+    const navigate = useNavigate(); 
 
     const handleSaveNote = () => {
         setNotes([...notes, note]);
@@ -83,18 +90,20 @@ export const DetalleCasos = () => {
                             <button className="boton-principal">Fotografías forenses</button>
                             <button className="boton-upload">
                                 <img src={upload} alt="Upload" />
-                            </button>
+                                </button>
                         </div>
                         <div className="boton-con-upload">
-                            <button className="boton-principal">Ver documentos existentes</button>
-                            <button className="boton-upload">
+                            <Link to="/documentos-existentes">
+                                <button className="boton-principal">Ver documentos existentes</button>
+                            </Link>
+                            <button className="boton-upload" onClick={handleUploadClick}>
                                 <img src={doc} alt="Document Upload" />
                             </button>
                         </div>
                     </div>
                 </div>
                 <br/>
-                <hr />
+                <hr/>   
 
                 <div className="historial-caso-container">
                     <br/>
