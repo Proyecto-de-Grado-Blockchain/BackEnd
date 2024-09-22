@@ -24,7 +24,6 @@ router.post('/login', async (req, res) => {
             contrasena: contrasenaReq
         },
       });
-      console.log('Usuario encontrado:', usuario);
   
       res.json(usuario);
     } catch (error) {

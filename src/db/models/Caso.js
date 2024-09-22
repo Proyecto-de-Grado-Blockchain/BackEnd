@@ -1,6 +1,6 @@
 // models/Caso.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/config');
+const sequelize = require('../../config/config');
 const Usuario = require('./Usuario'); // Asegúrate de importar el modelo Usuario
 
 const Caso = sequelize.define('Caso', {

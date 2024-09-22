@@ -19,7 +19,8 @@ app.use(cors({
 // Importar rutas
 const usuariosRoutes = require('./routes/usuarios');
 app.use('/usuarios', usuariosRoutes);
-
+const casosRoutes = require('./routes/casos');
+app.use('/casos', casosRoutes);
 // Iniciar el servidor y conectar a la base de datos
 sequelize.sync().then(() => {
     app.listen(PORT, () => {
