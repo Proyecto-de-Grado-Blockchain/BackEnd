@@ -19,7 +19,7 @@ export const CasosActivos = () => {
     const [casos, setCasos] = useState([]);
 
     const handleUploadClick = () => {
-        navigate('/ruta-a-otro-lado'); // Cambia esto a la ruta deseada
+        navigate('/ruta-a-otro-lado'); 
     };
     const navigate = useNavigate();
 
@@ -83,13 +83,13 @@ export const CasosActivos = () => {
     };
 
     const handleBuscar = () => {
-        // Resultados simulados
+        
         const resultados = [
             { numero: 1, nombre: 'Juan Pérez', fecha: '2024-09-12', estado: 'Activo', medico: 'Dr. Smith' },
             { numero: 2, nombre: 'Ana López', fecha: '2024-09-10', estado: 'Inactivo', medico: 'Dra. Gómez' },
         ];
 
-        // Filtra los casos por identificación y estado
+        
     const casosFiltrados = resultados.filter((caso) => {
         return (
             (selectedOption1 === 'Identificación' && inputValue1 === '1234') &&
@@ -116,7 +116,7 @@ export const CasosActivos = () => {
                         responsabilidades o cambiar el estado de cada proceso.</p>
                 </div>
 
-                {/* Inputs con íconos */}
+                
                 <div className="input-container">
                     <div className="input-wrapper">
                         <input 
@@ -197,7 +197,7 @@ export const CasosActivos = () => {
                     </div>
                 </div>
 
-                {/* Tabla de resultados */}
+                
                 {casos.length > 0 && (
                     <div className="tabla-container">
                         <table>
