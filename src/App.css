@@ -903,3 +903,60 @@ th {
   right: 10px;
   cursor: pointer;
 }
+
+/* CSS PARA DOCUMENTOS EXISTENTES */
+
+.DocumentosExistentes {
+  display: flex; /* Utiliza flexbox para alinear los módulos */
+  flex-direction: row; /* Alinea los módulos en fila */
+  gap: 10px; /* Espacio entre los módulos */
+  justify-content: center; /* Centra los módulos horizontalmente */
+}
+
+.documento {
+  border: 1px solid #ccc; /* Opcional: borde para cada módulo */
+  padding: 10px; /* Espaciado interno */
+  border-radius: 5px; /* Esquinas redondeadas */
+  width: 300px; /* Ancho máximo de 300px */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra opcional */
+}
+
+.document-table {
+  width: 100%; /* Hace que la tabla ocupe el 100% del ancho del contenedor */
+  border-collapse: collapse; /* Combina los bordes */
+}
+
+.document-table td {
+  padding: 5px; /* Espaciado interno de las celdas */
+  font-size: 0.9em; /* Tamaño de fuente más pequeño */
+}
+
+.small-table {
+  font-size: 0.8em; /* Tamaño de fuente más pequeño para la tabla */
+}
+
+.button-container {
+  display: flex; /* Usa flexbox para alinear los botones */
+  justify-content: space-between; /* Espacio entre los botones */
+  margin-top: 10px; /* Espacio por encima de los botones */
+}
+
+.btn-secondary {
+  background-color: rgba(20, 64, 49, 1); /* Color de fondo */
+  border: none; /* Sin borde */
+  color: white; /* Color del texto */
+  padding: 5px; /* Espaciado interno */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  display: flex; /* Para alinear el icono y el texto, si es necesario */
+  align-items: center; /* Centra el contenido verticalmente */
+}
+
+.btn-secondary img {
+  width: 20px; /* Ajusta el tamaño del ícono */
+  height: 20px; /* Ajusta el tamaño del ícono */
+  margin-right: 5px; /* Espacio entre el icono y el texto (si lo agregas) */
+}
+
+.white-image {
+  filter: brightness(0) invert(1); /* Cambia el color a blanco */
+}
