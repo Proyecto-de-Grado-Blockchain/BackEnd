@@ -57,7 +57,7 @@ export const CasosActivos = () => {
     if (selectedOption1 === "Nombre") {
       setInputValue1(value.replace(/[^a-zA-Z ]/g, ""));
     } else if (selectedOption1 === "Identificación") {
-      setInputValue1(value.replace(/[^0-9]/g, ""));
+      setInputValue1(value.replace(/[^a-zA-Z0-9]/g, ""));
     } else {
       setInputValue1(value);
     }
@@ -139,7 +139,7 @@ export const CasosActivos = () => {
                         {menu1Open && (
                             <div className="dropdown-menu">
                                 <button onClick={() => handleSelectOption('Nombre', 1)}>Nombre</button>
-                                <button onClick={() => handleSelectOption('Identificación', 1)}>Identificación</button>
+                                <button onClick={() => handleSelectOption('Identificación', 1)}>Número de caso</button>
                             </div>
                         )}
                     </div>
