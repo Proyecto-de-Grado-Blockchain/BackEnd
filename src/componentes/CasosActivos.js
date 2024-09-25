@@ -18,10 +18,10 @@ export const CasosActivos = () => {
   const [estado, setEstado] = useState("");
   const [casos, setCasos] = useState([]);
 
-    const handleUploadClick = () => {
-        navigate("/ruta-a-otro-lado"); // Cambia esto a la ruta deseada
-    };
-    const navigate = useNavigate();
+  const handleUploadClick = () => {
+    navigate("/ruta-a-otro-lado"); // Cambia esto a la ruta deseada
+  };
+  const navigate = useNavigate();
 
   const toggleMenu = (menu) => {
     if (menu === 1) {
@@ -105,7 +105,7 @@ export const CasosActivos = () => {
       .then((data) => {
         console.log(Array.isArray(data));
         setCasos(data);
-        console.log(casos)
+        console.log(casos);
       })
       .catch((error) => {
         console.error("Error en la solicitud:", error);
@@ -131,31 +131,35 @@ export const CasosActivos = () => {
           </p>
         </div>
 
-                {/* Inputs con íconos */}
-                <div className="input-container">
-                    <div className="input-wrapper">
-                        <input 
-                            type={inputType1} 
-                            placeholder={selectedOption1 || 'Nombre o Identificación'} 
-                            value={inputValue1}
-                            onChange={handleChangeInput1}
-                            disabled={!selectedOption1}
-                        />
-                        <div className="input-icons">
-                            <img 
-                                src={menu} 
-                                alt="Menu" 
-                                className="menu-icon-input" 
-                                onClick={() => toggleMenu(1)} 
-                            />
-                        </div>
-                        {menu1Open && (
-                            <div className="dropdown-menu">
-                                <button onClick={() => handleSelectOption('Nombre', 1)}>Nombre</button>
-                                <button onClick={() => handleSelectOption('Identificación', 1)}>Número de caso</button>
-                            </div>
-                        )}
-                    </div>
+        {/* Inputs con íconos */}
+        <div className="input-container">
+          <div className="input-wrapper">
+            <input
+              type={inputType1}
+              placeholder={selectedOption1 || "Nombre o Identificación"}
+              value={inputValue1}
+              onChange={handleChangeInput1}
+              disabled={!selectedOption1}
+            />
+            <div className="input-icons">
+              <img
+                src={menu}
+                alt="Menu"
+                className="menu-icon-input"
+                onClick={() => toggleMenu(1)}
+              />
+            </div>
+            {menu1Open && (
+              <div className="dropdown-menu">
+                <button onClick={() => handleSelectOption("Nombre", 1)}>
+                  Nombre
+                </button>
+                <button onClick={() => handleSelectOption("Identificación", 1)}>
+                  Número de caso
+                </button>
+              </div>
+            )}
+          </div>
 
           <div className="search-icon-container">
             <img
@@ -223,40 +227,45 @@ export const CasosActivos = () => {
           </div>
         </div>
 
-                {/* Tabla de resultados */}
-                {casos.length > 0 && (
-                    <div className="tabla-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Número de Caso</th>
-                                    <th>Nombre del Paciente</th>
-                                    <th>Fecha de Creación</th>
-                                    <th>Estado del Caso</th>
-                                    <th>Médico Forense</th>
-                                    <th>Ver Detalle</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {casos.map((caso, index) => (
-                                    <tr key={index}>
-                                        <td>{caso.numero}</td>
-                                        <td>{caso.nombre}</td>
-                                        <td>{caso.fecha}</td>
-                                        <td>{caso.estado}</td>
-                                        <td>{caso.medico}</td>
-                                        <td>
-                                        <Link to="/detalle-casos">
-                                            <button className='VerDetalle' onClick={() => handleVerDetalle(caso.numero)}>Ver Detalle</button>
-                                        </Link>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </div>
+        {/* Tabla de resultados */}
+        {casos.length > 0 && (
+          <div className="tabla-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Número de Caso</th>
+                  <th>Nombre del Paciente</th>
+                  <th>Fecha de Creación</th>
+                  <th>Estado del Caso</th>
+                  <th>Médico Forense</th>
+                  <th>Ver Detalle</th>
+                </tr>
+              </thead>
+              <tbody>
+                {casos.map((caso, index) => (
+                  <tr key={index}>
+                    <td>{caso.numero_caso}</td>
+                    <td>{caso.nombre_paciente}</td>
+                    <td>{caso.fecha_creacion}</td>
+                    <td>{caso.estado}</td>
+                    <td>{caso.id_usuario}</td>
+                    <td>
+                      <Link to="/detalle-casos">
+                        <button
+                          className="VerDetalle"
+                          onClick={() => handleVerDetalle(caso.numero)}
+                        >
+                          Ver Detalle
+                        </button>
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       <div className="activos-margin"></div>
     </div>
