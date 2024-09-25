@@ -162,7 +162,7 @@ export const CasosActivos = () => {
               src={lupa}
               alt="Buscar"
               className="search-icon"
-              onClick={handleBuscar}
+              onClick={useHandleBuscar}
             />
           </div>
 
