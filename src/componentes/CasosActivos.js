@@ -81,23 +81,36 @@ export const CasosActivos = () => {
     setMenu2Open(false);
   };
 
-    const handleBuscar = () => {
-        // Resultados simulados
-        const resultados = [
-            { numero: 1, nombre: 'Juan Pérez', fecha: '2024-09-12', estado: 'Activo', medico: 'Dr. Smith' },
-            { numero: 2, nombre: 'Ana López', fecha: '2024-09-10', estado: 'Inactivo', medico: 'Dra. Gómez' },
-        ];
-
-        // Filtra los casos por identificación y estado
-    const casosFiltrados = resultados.filter((caso) => {
-        return (
-            (selectedOption1 === 'Identificación' && inputValue1 === '1234') &&
-            (selectedOption2 === 'Estado' && estado === 'Activo')
-        );
-    });
-
-    setCasos(casosFiltrados);
-    };
+  const useHandleBuscar = () => {
+    fetch("http://localhost:3100/casos/casos-activos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Indicamos que estamos enviando JSON
+      },
+      body: JSON.stringify({
+        // Convertimos el objeto a JSON
+        seleccion1: selectedOption1,
+        seleccion2: selectedOption2,
+        entrada1: inputValue1,
+        entrada2: inputValue2,
+      }),
+    })
+      .then((response) => {
+        // Convertimos el objeto Response a JSON
+        if (!response.ok) {
+          throw new Error("Error en la respuesta del servidor");
+        }
+        return response.json(); // Devuelve una promesa que se resuelve a JSON
+      })
+      .then((data) => {
+        console.log(Array.isArray(data));
+        setCasos(data);
+        console.log(casos)
+      })
+      .catch((error) => {
+        console.error("Error en la solicitud:", error);
+      });
+  };
 
   const handleVerDetalle = (numeroCaso) => {
     navigate(`/detalle-caso/${numeroCaso}`);
