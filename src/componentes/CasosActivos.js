@@ -56,7 +56,7 @@ export const CasosActivos = () => {
     const value = e.target.value;
     if (selectedOption1 === "Nombre") {
       setInputValue1(value.replace(/[^a-zA-Z ]/g, ""));
-    } else if (selectedOption1 === "Identificación") {
+    } else if (selectedOption1 === "Número de caso") {
       setInputValue1(value.replace(/[^a-zA-Z0-9]/g, ""));
     } else {
       setInputValue1(value);
@@ -89,9 +89,7 @@ export const CasosActivos = () => {
       },
       body: JSON.stringify({
         // Convertimos el objeto a JSON
-        seleccion1: selectedOption1,
         seleccion2: selectedOption2,
-        entrada1: inputValue1,
         entrada2: inputValue2,
       }),
     })
@@ -135,45 +133,8 @@ export const CasosActivos = () => {
         <div className="input-container">
           <div className="input-wrapper">
             <input
-              type={inputType1}
-              placeholder={selectedOption1 || "Nombre o Identificación"}
-              value={inputValue1}
-              onChange={handleChangeInput1}
-              disabled={!selectedOption1}
-            />
-            <div className="input-icons">
-              <img
-                src={menu}
-                alt="Menu"
-                className="menu-icon-input"
-                onClick={() => toggleMenu(1)}
-              />
-            </div>
-            {menu1Open && (
-              <div className="dropdown-menu">
-                <button onClick={() => handleSelectOption("Nombre", 1)}>
-                  Nombre
-                </button>
-                <button onClick={() => handleSelectOption("Identificación", 1)}>
-                  Número de caso
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className="search-icon-container">
-            <img
-              src={lupa}
-              alt="Buscar"
-              className="search-icon"
-              onClick={useHandleBuscar}
-            />
-          </div>
-
-          <div className="input-wrapper">
-            <input
               type={inputType2}
-              placeholder={selectedOption2 || "Estado, Fecha o Médico Forense"}
+              placeholder={selectedOption2 || "Nombre, Número de caso, Fecha o Médico Forense"}
               value={inputValue2}
               onChange={handleChangeInput2}
               disabled={!selectedOption2}
@@ -188,8 +149,11 @@ export const CasosActivos = () => {
             </div>
             {menu2Open && (
               <div className="dropdown-menu">
-                <button onClick={() => handleSelectOption("Estado", 2)}>
-                  Estado
+                <button onClick={() => handleSelectOption("Nombre", 2)}>
+                  Nombre
+                </button>
+                <button onClick={() => handleSelectOption("Número de caso", 2)}>
+                  Número de caso
                 </button>
                 <button onClick={() => handleSelectOption("Fecha", 2)}>
                   Fecha
@@ -197,33 +161,16 @@ export const CasosActivos = () => {
                 <button onClick={() => handleSelectOption("Médico Forense", 2)}>
                   Médico Forense
                 </button>
-
-                {estadoMenuOpen && selectedOption2 === "Estado" && (
-                  <div className="estado-options">
-                    <label>
-                      <input
-                        type="radio"
-                        name="estado"
-                        value="Activo"
-                        checked={estado === "Activo"}
-                        onChange={() => handleEstadoChange("Activo")}
-                      />
-                      Activo
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        name="estado"
-                        value="Inactivo"
-                        checked={estado === "Inactivo"}
-                        onChange={() => handleEstadoChange("Inactivo")}
-                      />
-                      Inactivo
-                    </label>
-                  </div>
-                )}
               </div>
             )}
+          </div>
+          <div className="search-icon-container">
+            <img
+              src={lupa}
+              alt="Buscar"
+              className="search-icon"
+              onClick={useHandleBuscar}
+            />
           </div>
         </div>
 
