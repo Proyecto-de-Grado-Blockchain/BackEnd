@@ -24,7 +24,7 @@ export const Home = () => {
             <div className="d-block w-100 bg-light text-center p-4" >
               <h4>Gestión de Casos Forenses</h4>
               <p>Desde aquí puedes gestionar y acceder a la información forense de manera segura y confiable, utilizando la tecnología Blockchain para asegurar la integridad y trazabilidad de los datos.</p>
-              <img src={carruselimg3} className="imagenesCarrusel" style={{ height: '150px' }}></img>
+              <img src={carruselimg3} className="imagenesCarrusel" style={{ height: '120px' }}></img>
             </div>
           </div>
           <div className="carousel-item">
