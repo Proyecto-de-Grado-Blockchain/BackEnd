@@ -4,6 +4,9 @@ import Franja from './Franja.js';
 import img1 from '../imagenes/img1.png'; 
 import img2 from '../imagenes/img2.png';
 import crear from '../imagenes/crear.png';
+import carruselimg1 from '../imagenes/carruselimg1.png'
+import carruselimg2 from '../imagenes/carruselimg2.png'
+import carruselimg3 from '../imagenes/carruselimg3.png'
 
 export const Home = () => {
   return (
@@ -14,25 +17,28 @@ export const Home = () => {
         id="carouselExampleCaptions"
         className="carousel slide"
         data-bs-ride="carousel"
-        data-bs-interval="1000"
+        data-bs-interval="3000"
       >
         <div className="carousel-inner">
           <div className="carousel-item active">
             <div className="d-block w-100 bg-light text-center p-4" >
               <h4>Gestión de Casos Forenses</h4>
               <p>Desde aquí puedes gestionar y acceder a la información forense de manera segura y confiable, utilizando la tecnología Blockchain para asegurar la integridad y trazabilidad de los datos.</p>
+              <img src={carruselimg3} className="imagenesCarrusel" style={{ height: '150px' }}></img>
             </div>
           </div>
           <div className="carousel-item">
             <div className="d-block w-100 bg-light text-center p-4">
               <h4>Seguridad de Datos</h4>
               <p>Implementamos tecnologías avanzadas para garantizar la seguridad y privacidad de los datos forenses. Nuestra solución está diseñada para proteger la integridad de la información en todo momento.</p>
+              <img src={carruselimg2} className="imagenesCarrusel" style={{ height: '120px' }}></img>
             </div>
           </div>
           <div className="carousel-item">
             <div className="d-block w-100 bg-light text-center p-4" >
               <h4>Acceso Simplificado</h4>
               <p>Accede a la información forense de manera intuitiva y fácil. Nuestra interfaz permite una navegación sencilla, permitiendo a los usuarios encontrar la información que necesitan sin complicaciones.</p>
+              <img src={carruselimg1} className="imagenesCarrusel" style={{ height: '120px' }}></img>
             </div>
           </div>
         </div>
@@ -45,6 +51,8 @@ export const Home = () => {
           <span className="visually-hidden">Next</span>
         </button>
       </div>
+
+        <br/><hr/>
 
       {/* Módulos principales */}
       <div className="modules-container">
