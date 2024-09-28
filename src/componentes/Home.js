@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Franja from './Franja'; 
+import Franja from './Franja.js'; 
 import img1 from '../imagenes/img1.png'; 
 import img2 from '../imagenes/img2.png';
-import img3 from '../imagenes/img3.png';
+import crear from '../imagenes/crear.png';
 
 export const Home = () => {
   return (
@@ -65,10 +65,11 @@ export const Home = () => {
           </Link>
         </div>
         <div className="module">
-          <img src={img3} alt="Centro de Ayuda y Soporte" className="module-image" />
-          <h4 className="module-title">Centro de Ayuda y Soporte</h4>
-          <p className="module-text">Encuentra manuales de usuario, guías rápidas y respuestas a preguntas frecuentes. Este módulo ofrece asistencia para navegar por la plataforma y aprovechar al máximo sus funcionalidades, con el respaldo de documentación clara y detallada.</p>
-          <Link to="/centro-ayuda">
+          <img src={crear} alt="Centro de Ayuda y Soporte" className="module-image" />
+          <h4 className="module-title">Crear Nuevo Caso</h4>
+          <p className="module-text">En este módulo, podrás crear nuevos casos, agregando la inforación necesaria para cada caso.</p>
+          <br/><br/><br/><br/>
+          <Link to="/crear-caso">
           <button className="btn btn-primary module-btn">Ingresar</button>
           </Link>
         </div>

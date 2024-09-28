@@ -27,15 +27,10 @@ export const Ayuda = () => {
           <h4 className="module-title">Manual Técnico</h4>
           <p>Guía detallada sobre la configuración,  
             mantenimiento y funcionamiento técnico del sistema para administradores y desarrolladores.</p>
-          <div className="button-container">
-            <Link to="/visualizar-doc">
-              <button className="btn btn-secondary module-btn">
-                <img src={upload} alt="Visualizar Documento" />
-              </button>
-            </Link>
+          <div className="button-subir">
             <Link to="/subir-doc">
               <button className="btn btn-secondary module-btn">
-                <img src={ojoA} alt="Subir Documento" className="white-image" />
+                <img src={ojoA} alt="Mirar Documento" className="white-image" />
               </button>
             </Link>
           </div>
@@ -46,15 +41,10 @@ export const Ayuda = () => {
           <h4 className="module-title">Manual de Usuario</h4>
           <p>Instrucciones paso a paso para que los usuarios 
             finales puedan utilizar las funciones y características del sistema de manera eficiente.</p>
-          <div className="button-container">
-            <Link to="/visualizar-doc">
-              <button className="btn btn-secondary module-btn">
-                <img src={upload} alt="Visualizar Documento" />
-              </button>
-            </Link>
+          <div className="button-subir">
             <Link to="/subir-doc">
               <button className="btn btn-secondary module-btn">
-                <img src={ojoA} alt="Subir Documento" className="white-image" />
+                <img src={ojoA} alt="Mirar Documento" className="white-image" />
               </button>
             </Link>
           </div>

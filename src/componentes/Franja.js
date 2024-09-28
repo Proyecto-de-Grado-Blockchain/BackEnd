@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Importa Link para la navegación
+import { Link } from 'react-router-dom'; 
 import logo2 from '../imagenes/logo2.png';
 import menu from '../imagenes/menu.png';
 import iconoMenu from '../imagenes/iconoMenu.png';
@@ -64,7 +64,7 @@ const Franja = ({ onLogout }) => {
                         <img src={iconoMenu} alt="Inicio" className="nav-icon" />
                         <div className="nav-text">
                           <span className="nav-title">Página Principal</span>
-                          <span className="nav-description">Página principal del sistema</span>
+                          <span className="nav-description">Página principal del sistema.</span>
                         </div>
                       </Link>
                     </li>
@@ -73,7 +73,7 @@ const Franja = ({ onLogout }) => {
                         <img src={iconoMenu} alt="Casos Activos" className="nav-icon" />
                         <div className="nav-text">
                           <span className="nav-title">Casos Activos</span>
-                          <span className="nav-description">Lista de casos forenses en curso</span>
+                          <span className="nav-description">Lista de casos forenses en curso.</span>
                         </div>
                       </Link>
                     </li>
@@ -82,26 +82,45 @@ const Franja = ({ onLogout }) => {
                         <img src={iconoMenu} alt="Casos Cerrados" className="nav-icon" />
                         <div className="nav-text">
                           <span className="nav-title">Casos Cerrados</span>
-                          <span className="nav-description">Consulta de casos finalizados o archivados</span>
+                          <span className="nav-description">Consulta de casos finalizados o archivados.</span>
                         </div>
                       </Link>
                     </li>
+
+                    <li className="nav-item">
+                    <Link to="/crear-caso" className="nav-link">
+                        <img src={iconoMenu} alt="CrearCaso" className="nav-icon" />
+                        <div className="nav-text">
+                          <span className="nav-title">Crear Caso</span>
+                          <span className="nav-description">Realizar la creación de un nuevo paciente o caso.</span>
+                        </div>
+                        </Link>
+                    </li>
+
+                    <li className="nav-item">
+                    <Link to="/agregar-documentos" className="nav-link">
+                        <img src={iconoMenu} alt="agregarDoc" className="nav-icon" />
+                        <div className="nav-text">
+                          <span className="nav-title">Agregar Doccumentos</span>
+                          <span className="nav-description">Agregar documentos al caso creado.</span>
+                        </div>
+                        </Link>
+                    </li>
+
                     <li className="nav-item">
                     <Link to="/centro-ayuda" className="nav-link">
                         <img src={iconoMenu} alt="Ayuda" className="nav-icon" />
                         <div className="nav-text">
                           <span className="nav-title">Ayuda</span>
-                          <span className="nav-description">Acceso a manuales de usuario y técnico</span>
+                          <span className="nav-description">Acceso a manuales de usuario y técnico.</span>
                         </div>
                         </Link>
                     </li>
                   </ul>
                 </div>
-                <div className="p-3 border-top mt-auto">
                   <button className="btn btn-primary w-100 logout-btn" onClick={handleLogout}>
                     Cerrar Sesión
                   </button>
-                </div>
               </div>
             </div>
           </div>

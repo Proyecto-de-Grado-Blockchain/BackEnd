@@ -8,6 +8,8 @@ import {DetalleCasos} from './componentes/DetalleCasos';
 import {DetalleCasosCerrados} from './componentes/DetalleCasosCerrados'
 import {DocumentosExistentes} from './componentes/DocumentosExistentes'; 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { CrearCaso } from './componentes/CrearCaso';
+import { AgregarDocumentos } from './componentes/AgregarDocumentos';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
             <Route path="/detalle-casos" element={<DetalleCasos/>} />
             <Route path="/Documentos-existentes" element={<DocumentosExistentes/>} />
             <Route path="/detalle-casosCerrados" element={<DetalleCasosCerrados/>} />
+            <Route path="/crear-caso" element={<CrearCaso/>} />
+            <Route path="/agregar-documentos" element={<AgregarDocumentos/>} />
           </Routes>
         </header>
       </div>
