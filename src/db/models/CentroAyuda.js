@@ -1,6 +1,6 @@
 // models/CentroAyuda.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/config');
+const sequelize = require('../../config/config');
 
 const CentroAyuda = sequelize.define('CentroAyuda', {
     id: {
