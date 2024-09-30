@@ -4,7 +4,6 @@ import Franja from "./Franja";
 import { Link } from "react-router-dom";
 import upload from "../imagenes/upload.png";
 import lupa from "../imagenes/lupa.png";
-import doc from "../imagenes/doc.png";
 import lapiz from "../imagenes/lapiz.png";
 
 export const DetalleCasos = () => {
@@ -43,10 +42,6 @@ export const DetalleCasos = () => {
     ultimaActualizacion: "2024-09-15",
   };
 
-  const handleUploadClick = () => {
-    navigate("/rut  a-a-otro-lado"); // Cambia esto a la ruta deseada
-  };
-
   const navigate = useNavigate();
 
   const handleSaveNote = () => {
@@ -55,18 +50,21 @@ export const DetalleCasos = () => {
     setNote(""); // Limpia el input después de guardar
   };
 
-  function useCargarArchivo() {
-    fetch("http://localhost:3100/detalle/cargarArchivo")
-      .then((response) => {
-        // Convertimos el objeto Response a JSON
-        if (!response.ok) {
-          throw new Error("Error en la respuesta del servidor");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
+  async function useCargarArchivo() {
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      const response = await fetch("http://localhost:3100/docs/upload", {
+        method: "POST",
+        body: formData,
       });
+
+      const result = await response.json();
+      console.log("Archivo subido:", result);
+    } catch (error) {
+      console.error("Error al subir el archivo:", error);
+    }
   }
 
   return (
@@ -178,7 +176,9 @@ export const DetalleCasos = () => {
 
               {/* Botón personalizado que dispara el input file */}
               <button onClick={handleButtonClick} className="boton-principal">
-                {selectedFile2 ? selectedFile2.name : "Resultados de laboratorio"}
+                {selectedFile2
+                  ? selectedFile2.name
+                  : "Resultados de laboratorio"}
               </button>
               <button className="boton-upload">
                 <img src={upload} alt="Upload" />
