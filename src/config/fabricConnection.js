@@ -1,11 +1,11 @@
-import * as grpc from '@grpc/grpc-js';
-import * as crypto from 'node:crypto';
-import { connect, Identity, signers } from '@hyperledger/fabric-gateway';
-import { promises as fs } from 'node:fs';
-import { TextDecoder } from 'node:util';
+const grpc = require('@grpc/grpc-js');
+const crypto = require('node:crypto');
+const { connect, Identity, signers } = require('@hyperledger/fabric-gateway');
+const fs = require('node:fs').promises;
+const { TextDecoder } = require('node:util');
 
 const utf8Decoder = new TextDecoder();
-const peerEndpoint = 'localhost:7051';
+const peerEndpoint = 'localhost:8051';
 
 async function newGrpcConnection() {
     const tlsRootCert = await fs.readFile("/home/administrador/red-hyperledger-fabric/unbosque-network/crypto-config/peerOrganizations/medleg.unbosque.edu.co/peers/peer0.medleg.unbosque.edu.co/tls/ca.crt");
@@ -26,7 +26,7 @@ async function newSigner() {
     return signers.newPrivateKeySigner(privateKey);
 }
 
-export async function getFabricGateway() {
+async function getFabricGateway() {
     const client = await newGrpcConnection();
     const identity = await newIdentity();
     const signer = await newSigner();
@@ -37,3 +37,5 @@ export async function getFabricGateway() {
         signer,
     });
 }
+
+module.exports = { getFabricGateway };

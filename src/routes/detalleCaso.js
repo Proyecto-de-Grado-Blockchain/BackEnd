@@ -1,10 +1,10 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
 const router = express.Router();
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
 const crypto = require('crypto');
+const connection = require('../config/transactionHandler');
 
 router.use(express.json());
 
@@ -21,14 +21,23 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Ruta para recibir el archivo
-router.post('/upload', upload.single('file'), (req, res) => {
+router.post('/upload', upload.single('file'), async (req, res) => {
   try {
     // El archivo se ha subido correctamente
     console.log('Archivo subido:', req.file);
-    hashPdf(req.file.path);
+    const hashDoc = await hashPdf(req.file.path);
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const day = today.getDate();
+    const fullDay = year + "-" + month + "-" + day;
+    const assetId = `asset${Date.now()}`;
+    const args = [ "1", "CASO001", "CC", req.file.filename, "2024-8-30", "Oscar Florez" ];
+    connection.submitTransaction('blockchain_medicina_forense', 'agregarDocumento', args);
+    // Enviar la respuesta una vez que la transacción esté completa
     res.json({
-      message: 'Archivo subido exitosamente',
-      file: req.file,
+        message: 'Archivo subido y transacción completada exitosamente',
+        file: req.file,
     });
   } catch (error) {
     console.error('Error al subir el archivo:', error);
@@ -45,14 +54,15 @@ async function hashPdf(filePath) {
     // Extrae el contenido del PDF
     const data = await pdfParse(dataBuffer);
 
-    // Genera el hash del contenido del PDF (puede usar SHA-256, por ejemplo)
+    // Genera el hash del contenido del PDF
     const hash = crypto.createHash("sha256");
     hash.update(data.text);
     const hashedContent = hash.digest("hex");
 
     console.log("Hash del PDF:", hashedContent);
+    return hashedContent
   } catch (err) {
-    console.error("Error al procesar el PDF:", err);
+    return "Error al procesar el PDF:", err;
   }
 }
 

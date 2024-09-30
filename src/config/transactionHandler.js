@@ -1,4 +1,4 @@
-import { getFabricGateway } from './fabricConnection.js';
+const { getFabricGateway } = require('./fabricConnection.js');
 
 async function submitTransaction(chaincodeName, functionName, args) {
     try {
@@ -19,4 +19,4 @@ async function submitTransaction(chaincodeName, functionName, args) {
     }
 }
 
-export { submitTransaction };
+module.exports = { submitTransaction };
