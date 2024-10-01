@@ -1054,3 +1054,11 @@ label {
 .btn-enviar:hover {
   background-color: #0056b3;
 }
+
+.limpiarFiltros{
+  background-color: #4CAF50; /* Verde */
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}

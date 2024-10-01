@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Franja from "./Franja";
@@ -6,27 +6,18 @@ import menu from "../imagenes/menu.png";
 import lupa from "../imagenes/lupa.png";
 
 export const CasosCerrados = () => {
-  const [menu1Open, setMenu1Open] = useState(false);
   const [menu2Open, setMenu2Open] = useState(false);
   const [estadoMenuOpen, setEstadoMenuOpen] = useState(false);
-  const [selectedOption1, setSelectedOption1] = useState("");
   const [selectedOption2, setSelectedOption2] = useState("");
-  const [inputType1, setInputType1] = useState("text");
   const [inputType2, setInputType2] = useState("text");
-  const [inputValue1, setInputValue1] = useState("");
   const [inputValue2, setInputValue2] = useState("");
-  const [estado, setEstado] = useState("");
   const [casos, setCasos] = useState([]);
+  const [showReloadButton, setShowReloadButton] = useState(false);
 
-  const handleUploadClick = () => {
-    navigate("/ruta-a-otro-lado"); // Cambia esto a la ruta deseada
-  };
   const navigate = useNavigate();
 
   const toggleMenu = (menu) => {
-    if (menu === 1) {
-      setMenu1Open(!menu1Open);
-    } else if (menu === 2) {
+    if (menu === 2) {
       if (estadoMenuOpen) {
         setEstadoMenuOpen(false);
       } else {
@@ -36,11 +27,7 @@ export const CasosCerrados = () => {
   };
 
   const handleSelectOption = (option, menu) => {
-    if (menu === 1) {
-      setSelectedOption1(option);
-      setInputType1(option === "Fecha" ? "date" : "text");
-      setMenu1Open(false);
-    } else if (menu === 2) {
+    if (menu === 2) {
       setSelectedOption2(option);
       setInputType2(option === "Fecha" ? "date" : "text");
       if (option === "Estado") {
@@ -52,33 +39,19 @@ export const CasosCerrados = () => {
     }
   };
 
-  const handleChangeInput1 = (e) => {
-    const value = e.target.value;
-    if (selectedOption1 === "Nombre") {
-      setInputValue1(value.replace(/[^a-zA-Z ]/g, ""));
-    } else if (selectedOption1 === "Identificación") {
-      setInputValue1(value.replace(/[^0-9]/g, ""));
-    } else {
-      setInputValue1(value);
-    }
-  };
-
   const handleChangeInput2 = (e) => {
     const value = e.target.value;
     if (selectedOption2 === "Estado") {
       return;
     } else if (selectedOption2 === "Médico Forense") {
       setInputValue2(value.replace(/[^a-zA-Z ]/g, ""));
+    } else if (selectedOption2 === "Nombre") {
+      setInputValue2(value.replace(/[^a-zA-Z ]/g, ""));
+    } else if (selectedOption2 === "Identificación") {
+      setInputValue2(value.replace(/[^0-9]/g, ""));
     } else {
       setInputValue2(value);
     }
-  };
-
-  const handleEstadoChange = (value) => {
-    setEstado(value);
-    setInputValue2(value);
-    setEstadoMenuOpen(false);
-    setMenu2Open(false);
   };
 
   const useHandleBuscar = () => {
@@ -103,12 +76,38 @@ export const CasosCerrados = () => {
       .then((data) => {
         console.log(Array.isArray(data));
         setCasos(data);
-        console.log(casos);
+        setShowReloadButton(true);
       })
       .catch((error) => {
         console.error("Error en la solicitud:", error);
       });
   };
+
+  useEffect(() => {
+    // Acción que quieres ejecutar cuando se cargue la página
+    fetch("http://localhost:3100/casos/casos-inactivos", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json", // Indicamos que estamos enviando JSON
+      },
+    })
+      .then((response) => {
+        // Convertimos el objeto Response a JSON
+        if (!response.ok) {
+          throw new Error("Error en la respuesta del servidor");
+        }
+        return response.json(); // Devuelve una promesa que se resuelve a JSON
+      })
+      .then((data) => {
+        console.log(Array.isArray(data));
+        setCasos(data);
+      })
+      .catch((error) => {
+        console.error("Error en la solicitud:", error);
+      });
+
+    // Puedes ejecutar cualquier otra lógica aquí
+  }, []);
 
   const handleVerDetalle = (numeroCaso) => {
     navigate(`/detalle-caso/${numeroCaso}`);
@@ -175,6 +174,16 @@ export const CasosCerrados = () => {
               onClick={useHandleBuscar}
             />
           </div>
+          {showReloadButton && (
+            <div>
+              <button
+                className="limpiarFiltros"
+                onClick={() => window.location.reload()}
+              >
+                Limpiar Filtros
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Tabla de resultados */}
@@ -203,7 +212,7 @@ export const CasosCerrados = () => {
                       <Link to="/detalle-casosCerrados">
                         <button
                           className="VerDetalle"
-                          onClick={() => handleVerDetalle(caso.numero)}
+                          onClick={() => handleVerDetalle(caso.numero_caso)}
                         >
                           Ver Detalle
                         </button>
