@@ -1,6 +1,6 @@
 const { getFabricGateway } = require('./fabricConnection.js');
 
-async function submitTransaction(chaincodeName, functionName, args) {
+async function submitTransaction(chaincodeName, functionName, ...args) {
     try {
         const gateway = await getFabricGateway();
         const network = gateway.getNetwork('unbosquechannel');

@@ -32,8 +32,8 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     const day = today.getDate();
     const fullDay = year + "-" + month + "-" + day;
     const assetId = `asset${Date.now()}`;
-    const args = [ "1", "CASO001", "CC", req.file.filename, "2024-8-30", "Oscar Florez" ];
-    connection.submitTransaction('blockchain_medicina_forense', 'agregarDocumento', args);
+    const args = [ "3", "CASO003", "TI", req.file.filename, "2024-09-30", "Oscar Florez" ];
+    connection.submitTransaction('blockchain_medicina_forense', 'agregarDocumento', ...args);
     // Enviar la respuesta una vez que la transacción esté completa
     res.json({
         message: 'Archivo subido y transacción completada exitosamente',
