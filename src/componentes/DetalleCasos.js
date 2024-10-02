@@ -33,6 +33,14 @@ export const DetalleCasos = () => {
     document.getElementById("hiddenFileInput").click(); // Simular clic en el input file
   };
 
+  const handleButtonClick2 = () => {
+    document.getElementById("hiddenFileInput2").click(); // Simular clic en el input file
+  };
+
+  const handleButtonClick3 = () => {
+    document.getElementById("hiddenFileInput3").click(); // Simular clic en el input file
+  };
+
   const caso = {
     numero: 1,
     nombre: "Juan Pérez",
@@ -175,12 +183,12 @@ export const DetalleCasos = () => {
               />
 
               {/* Botón personalizado que dispara el input file */}
-              <button onClick={handleButtonClick} className="boton-principal">
+              <button onClick={handleButtonClick2} className="boton-principal">
                 {selectedFile2
                   ? selectedFile2.name
                   : "Resultados de laboratorio"}
               </button>
-              <button className="boton-upload">
+              <button className="boton-upload" onClick={useCargarArchivo}>
                 <img src={upload} alt="Upload" />
               </button>
             </div>
@@ -194,10 +202,10 @@ export const DetalleCasos = () => {
               />
 
               {/* Botón personalizado que dispara el input file */}
-              <button onClick={handleButtonClick} className="boton-principal">
+              <button onClick={handleButtonClick3} className="boton-principal">
                 {selectedFile3 ? selectedFile3.name : "Fotografías forenses"}
               </button>
-              <button className="boton-upload">
+              <button className="boton-upload" onClick={useCargarArchivo}>
                 <img src={upload} alt="Upload" />
               </button>
             </div>
