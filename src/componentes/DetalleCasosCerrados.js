@@ -12,15 +12,15 @@ export const DetalleCasosCerrados = () => {
     
     const caso = {
         numero: 1,
-        nombre: 'Juan Pérez',
-        fecha: '2024-09-12',
-        estado: 'Activo',
-        forense: 'Dr. Smith',
-        ultimaActualizacion: '2024-09-15',
+        nombre: 'Ana Martinez',
+        fecha: '2023-09-04',
+        estado: 'Inactivo',
+        forense: 'Jonathan Angulo',
+        ultimaActualizacion: '2023-09-04',
     };
 
     const handleUploadClick = () => {
-        navigate('/rut  a-a-otro-lado'); // Cambia esto a la ruta deseada
+        navigate('/ruta-a-otro-lado'); // Cambia esto a la ruta deseada
     };
 
     const navigate = useNavigate(); 
@@ -101,7 +101,6 @@ export const DetalleCasosCerrados = () => {
                         <thead>
                             <tr>
                                 <th>Fecha</th>
-                                <th>Hora</th>
                                 <th>Descripción de la acción realizada</th>
                                 <th>Usuario responsable</th>
                                 <th>Notas Adjuntas</th>
@@ -110,9 +109,8 @@ export const DetalleCasosCerrados = () => {
                         <tbody>
                             <tr>
                                 <td>2024-09-01</td>
-                                <td>10:00 AM</td>
                                 <td>Se creó el caso.</td>
-                                <td>Admin</td>
+                                <td>Jonathan Angulo</td>
                                 <td>Nota 1</td>
                             </tr>           
                         </tbody>

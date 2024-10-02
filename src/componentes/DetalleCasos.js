@@ -14,6 +14,32 @@ export const DetalleCasos = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedFile2, setSelectedFile2] = useState(null);
   const [selectedFile3, setSelectedFile3] = useState(null);
+  const [showDialog, setShowDialog] = useState(false);
+  const [showDialogErr, setShowDialogErr] = useState(false);
+
+  const dialogStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    padding: "20px",
+    backgroundColor: "green",
+    color: "white",
+    borderRadius: "10px",
+    textAlign: "center",
+  };
+
+  const dialogStyleErr = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    padding: "20px",
+    backgroundColor: "red",
+    color: "white",
+    borderRadius: "10px",
+    textAlign: "center",
+  };
 
   // Manejador cuando se selecciona un archivo
   const handleFileChange = (event) => {
@@ -42,12 +68,12 @@ export const DetalleCasos = () => {
   };
 
   const caso = {
-    numero: 1,
-    nombre: "Juan Pérez",
-    fecha: "2024-09-12",
+    numero: "CASO013",
+    nombre: "Carlos Mora",
+    fecha: "2024-10-01",
     estado: "Activo",
-    forense: "Dr. Smith",
-    ultimaActualizacion: "2024-09-15",
+    forense: "Oscar Florez",
+    ultimaActualizacion: "2024-10-01",
   };
 
   const navigate = useNavigate();
@@ -58,9 +84,15 @@ export const DetalleCasos = () => {
     setNote(""); // Limpia el input después de guardar
   };
 
-  async function useCargarArchivo() {
+  async function cargarArchivo(numBoton) {
     const formData = new FormData();
-    formData.append("file", selectedFile);
+    if (numBoton === "1") {
+      formData.append("file", selectedFile);
+    } else if (numBoton === "2") {
+      formData.append("file", selectedFile2);
+    } else if (numBoton === "3") {
+      formData.append("file", selectedFile3);
+    }
 
     try {
       const response = await fetch("http://localhost:3100/docs/upload", {
@@ -68,8 +100,23 @@ export const DetalleCasos = () => {
         body: formData,
       });
 
-      const result = await response.json();
-      console.log("Archivo subido:", result);
+      const result = await response.json().then((data) => {
+        console.log(data);
+        if (data.transactionResponse) {
+          setShowDialog(true); // Muestra el diálogo
+          setTimeout(() => {
+            setShowDialog(false);
+            setSelectedFile(null);
+            setSelectedFile2(null);
+            setSelectedFile3(null);
+          }, 2000);
+        } else if (data.message === "Error al subir el archivo") {
+          setShowDialogErr(true); // Muestra el diálogo
+          setTimeout(() => {
+            setShowDialogErr(false); // Desaparece después de 2 segundos
+          }, 2000);
+        }
+      });
     } catch (error) {
       console.error("Error al subir el archivo:", error);
     }
@@ -169,14 +216,17 @@ export const DetalleCasos = () => {
               <button onClick={handleButtonClick} className="boton-principal">
                 {selectedFile ? selectedFile.name : "Informe médico"}
               </button>
-              <button className="boton-upload" onClick={useCargarArchivo}>
+              <button
+                className="boton-upload"
+                onClick={() => cargarArchivo("1")}
+              >
                 <img src={upload} alt="Upload" />
               </button>
             </div>
             <div className="boton-con-upload">
               {/* Input de tipo file oculto */}
               <input
-                id="hiddenFileInput"
+                id="hiddenFileInput2"
                 type="file"
                 style={{ display: "none" }} // Ocultamos el input
                 onChange={handleFileChange2}
@@ -188,14 +238,17 @@ export const DetalleCasos = () => {
                   ? selectedFile2.name
                   : "Resultados de laboratorio"}
               </button>
-              <button className="boton-upload" onClick={useCargarArchivo}>
+              <button
+                className="boton-upload"
+                onClick={() => cargarArchivo("2")}
+              >
                 <img src={upload} alt="Upload" />
               </button>
             </div>
             <div className="boton-con-upload">
               {/* Input de tipo file oculto */}
               <input
-                id="hiddenFileInput"
+                id="hiddenFileInput3"
                 type="file"
                 style={{ display: "none" }} // Ocultamos el input
                 onChange={handleFileChange3}
@@ -205,7 +258,10 @@ export const DetalleCasos = () => {
               <button onClick={handleButtonClick3} className="boton-principal">
                 {selectedFile3 ? selectedFile3.name : "Fotografías forenses"}
               </button>
-              <button className="boton-upload" onClick={useCargarArchivo}>
+              <button
+                className="boton-upload"
+                onClick={() => cargarArchivo("3")}
+              >
                 <img src={upload} alt="Upload" />
               </button>
             </div>
@@ -217,6 +273,18 @@ export const DetalleCasos = () => {
               </Link>
             </div>
           </div>
+          <div>
+            {showDialog && (
+              <div style={dialogStyle}>
+                <p>Archivo enviado a la red blockchain de manera exitosa</p>
+              </div>
+            )}
+            {showDialogErr && (
+              <div style={dialogStyleErr}>
+                <p>Error enviado archivo a la red blockchain</p>
+              </div>
+            )}
+          </div>
         </div>
         <br />
         <hr />
@@ -225,32 +293,22 @@ export const DetalleCasos = () => {
           <br />
           <div className="input-boton-container">
             <h4>Historial del caso</h4>
-            <div className="buscar-container">
-              <input type="text" placeholder="Buscar..." />
-              <button className="buscar-boton">
-                <img src={lupa} alt="Buscar" />
-              </button>
-            </div>
           </div>
           <br />
           <table className="historial-caso-tabla">
             <thead>
               <tr>
                 <th>Fecha</th>
-                <th>Hora</th>
                 <th>Descripción de la acción realizada</th>
                 <th>Usuario responsable</th>
-                <th>Notas Adjuntas</th>
                 <th>Notas</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>2024-09-01</td>
-                <td>10:00 AM</td>
+                <td>2024-10-01</td>
                 <td>Se creó el caso.</td>
-                <td>Admin</td>
-                <td>Nota 1</td>
+                <td>Oscar Florez</td>
                 <td>
                   <button
                     onClick={() => setModalOpen(true)}

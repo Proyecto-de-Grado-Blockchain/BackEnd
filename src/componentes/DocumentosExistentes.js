@@ -33,9 +33,9 @@ export const DocumentosExistentes = () => {
           </thead>
           <tbody>
             <tr>
-              <td>00001</td>
-              <td>Jorge</td>
-              <td>Oscar</td>
+              <td>CASO013</td>
+              <td>Carlos Mora</td>
+              <td>Oscar Florez</td>
             </tr>           
           </tbody>
         </table>
@@ -56,31 +56,14 @@ export const DocumentosExistentes = () => {
               </tr>
               <tr>
                 <td>Fecha de Subida:</td>
-                <td>2024-09-20</td>
-              </tr>
-              <tr>
-                <td>Tamaño del archivo:</td>
-                <td>1.5 MB</td>
+                <td>2024-10-01</td>
               </tr>
               <tr>
                 <td>Subido por:</td>
-                <td>Usuario A</td>
+                <td>Oscar Florez</td>
               </tr>
             </tbody>
           </table>
-
-          <div className="button-container">
-            <Link to="/visualizar-doc">
-              <button className="btn btn-secondary module-btn">
-                <img src={upload} alt="Visualizar Documento" />
-              </button>
-            </Link>
-            <Link to="/subir-doc">
-              <button className="btn btn-secondary module-btn">
-                <img src={ojoA} alt="Subir Documento" className="white-image" />
-              </button>
-            </Link>
-          </div>
         </div>
 
         <div className="documento">
@@ -95,31 +78,14 @@ export const DocumentosExistentes = () => {
               </tr>
               <tr>
                 <td>Fecha de Subida:</td>
-                <td>2024-09-18</td>
-              </tr>
-              <tr>
-                <td>Tamaño del archivo:</td>
-                <td>2.3 MB</td>
+                <td>2024-10-01</td>
               </tr>
               <tr>
                 <td>Subido por:</td>
-                <td>Usuario B</td>
+                <td>Oscar Florez</td>
               </tr>
             </tbody>
           </table>
-
-          <div className="button-container">
-            <Link to="/visualizar-doc">
-              <button className="btn btn-secondary module-btn">
-                <img src={upload} alt="Visualizar Documento" />
-              </button>
-            </Link>
-            <Link to="/subir-doc">
-              <button className="btn btn-secondary module-btn">
-                <img src={ojoA} alt="Subir Documento" className="white-image" />
-              </button>
-            </Link>
-          </div>
         </div>
 
         <div className="documento">
@@ -134,31 +100,14 @@ export const DocumentosExistentes = () => {
               </tr>
               <tr>
                 <td>Fecha de Subida:</td>
-                <td>2024-09-15</td>
-              </tr>
-              <tr>
-                <td>Tamaño del archivo:</td>
-                <td>5.0 MB</td>
+                <td>2024-10-01</td>
               </tr>
               <tr>
                 <td>Subido por:</td>
-                <td>Usuario C</td>
+                <td>Oscar Florez</td>
               </tr>
             </tbody>
           </table>
-
-          <div className="button-container">
-            <Link to="/visualizar-doc">
-              <button className="btn btn-secondary module-btn">
-                <img src={upload} alt="Visualizar Documento" />
-              </button>
-            </Link>
-            <Link to="/subir-doc">
-              <button className="btn btn-secondary module-btn">
-                <img src={ojoA} alt="Subir Documento" className="white-image" />
-              </button>
-            </Link>
-          </div>
         </div>
       </div>
 
