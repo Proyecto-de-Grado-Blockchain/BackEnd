@@ -1,21 +1,22 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import Franja from "./Franja";
 import { Link } from "react-router-dom";
 import upload from "../imagenes/upload.png";
-import lupa from "../imagenes/lupa.png";
 import lapiz from "../imagenes/lapiz.png";
+import Cookies from "js-cookie";
 
 export const DetalleCasos = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [note, setNote] = useState("");
-  const [notes, setNotes] = useState([]);
-  // Estado para almacenar el archivo seleccionado
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedFile2, setSelectedFile2] = useState(null);
   const [selectedFile3, setSelectedFile3] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [showDialogErr, setShowDialogErr] = useState(false);
+  const [caso, setCasos] = useState([]);
+  const numeroCaso = Cookies.get("numeroCaso");
+  const responsableID = Cookies.get("userId")
+  const [hCaso, setHCasos] = useState([]);
 
   const dialogStyle = {
     position: "absolute",
@@ -41,66 +42,131 @@ export const DetalleCasos = () => {
     textAlign: "center",
   };
 
-  // Manejador cuando se selecciona un archivo
   const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]); // Guardar el archivo en el estado
+    setSelectedFile(event.target.files[0]);
   };
 
   const handleFileChange2 = (event) => {
-    setSelectedFile2(event.target.files[0]); // Guardar el archivo en el estado
+    setSelectedFile2(event.target.files[0]);
   };
 
   const handleFileChange3 = (event) => {
-    setSelectedFile3(event.target.files[0]); // Guardar el archivo en el estado
+    setSelectedFile3(event.target.files[0]);
   };
 
-  // Manejador para disparar el clic en el input file oculto
   const handleButtonClick = () => {
-    document.getElementById("hiddenFileInput").click(); // Simular clic en el input file
+    document.getElementById("hiddenFileInput").click();
   };
 
   const handleButtonClick2 = () => {
-    document.getElementById("hiddenFileInput2").click(); // Simular clic en el input file
+    document.getElementById("hiddenFileInput2").click();
   };
 
   const handleButtonClick3 = () => {
-    document.getElementById("hiddenFileInput3").click(); // Simular clic en el input file
+    document.getElementById("hiddenFileInput3").click();
   };
 
-  const caso = {
-    numero: "CASO013",
-    nombre: "Carlos Mora",
-    fecha: "2024-10-01",
-    estado: "Activo",
-    forense: "Oscar Florez",
-    ultimaActualizacion: "2024-10-01",
-  };
+  const handleSaveNote = async () => {
+    let descripcionNota = "";
+    if(note === ""){
+      descripcionNota = "Se cargo un documento al caso"
+    }else{
+      descripcionNota = note;
+    }
 
-  const navigate = useNavigate();
-
-  const handleSaveNote = () => {
-    setNotes([...notes, note]);
+    await fetch("http://localhost:3100/historial/crear-historia", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        caso: numeroCaso,
+        des: descripcionNota,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error en la respuesta del servidor");
+        }
+        return response
+          .json()
+          .then((data) => ({ status: response.status, data }));
+      })
+      .then((status, data) => {
+        if (status.status === 200) {
+          window.location.reload();
+        }
+      });
     setModalOpen(false);
-    setNote(""); // Limpia el input después de guardar
   };
+
+  useEffect(() => {
+    fetch(`http://localhost:3100/casos/casos-activos?numCaso=${numeroCaso}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error en la respuesta del servidor");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setCasos(data[0]);
+        console.log(data[0]);
+      })
+      .catch((error) => {
+        console.error("Error en la solicitud:", error);
+      });
+
+    fetch(
+      `http://localhost:3100/historial/consultar-historia?numCaso=${numeroCaso}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error en la respuesta del servidor");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setHCasos(data);
+      })
+      .catch((err) => {
+        console.log("ERROR " + err);
+      });
+  }, []);
 
   async function cargarArchivo(numBoton) {
     const formData = new FormData();
     if (numBoton === "1") {
       formData.append("file", selectedFile);
+      formData.append("tipoArchivo", "Informe médico")
     } else if (numBoton === "2") {
       formData.append("file", selectedFile2);
+      formData.append("tipoArchivo", "Resultados de laboratorio")
     } else if (numBoton === "3") {
       formData.append("file", selectedFile3);
+      formData.append("tipoArchivo", "Fotografías forenses")
     }
+
+    formData.append("numCaso", numeroCaso);
+    formData.append("responsable", responsableID);
 
     try {
       const response = await fetch("http://localhost:3100/docs/upload", {
         method: "POST",
         body: formData,
       });
-
-      const result = await response.json().then((data) => {
+      await response.json().then((data) => {
         console.log(data);
         if (data.transactionResponse) {
           setShowDialog(true); // Muestra el diálogo
@@ -110,6 +176,7 @@ export const DetalleCasos = () => {
             setSelectedFile2(null);
             setSelectedFile3(null);
           }, 2000);
+          handleSaveNote();
         } else if (data.message === "Error al subir el archivo") {
           setShowDialogErr(true); // Muestra el diálogo
           setTimeout(() => {
@@ -172,9 +239,9 @@ export const DetalleCasos = () => {
                   </th>
                 </tr>
                 <tr>
-                  <td style={{ padding: "5px" }}>{caso.numero}</td>
-                  <td style={{ padding: "5px" }}>{caso.nombre}</td>
-                  <td style={{ padding: "5px" }}>{caso.fecha}</td>
+                  <td style={{ padding: "5px" }}>{caso.numero_caso}</td>
+                  <td style={{ padding: "5px" }}>{caso.nombre_paciente}</td>
+                  <td style={{ padding: "5px" }}>{caso.fecha_creacion}</td>
                 </tr>
                 <tr>
                   <th
@@ -189,14 +256,11 @@ export const DetalleCasos = () => {
                   </th>
                   <th
                     style={{ borderBottom: "1px solid black", padding: "5px" }}
-                  >
-                    Última Actualización
-                  </th>
+                  ></th>
                 </tr>
                 <tr>
                   <td style={{ padding: "5px" }}>{caso.estado}</td>
-                  <td style={{ padding: "5px" }}>{caso.forense}</td>
-                  <td style={{ padding: "5px" }}>{caso.ultimaActualizacion}</td>
+                  <td style={{ padding: "5px" }}>{caso.id_usuario}</td>
                 </tr>
               </tbody>
             </table>
@@ -210,6 +274,7 @@ export const DetalleCasos = () => {
                 type="file"
                 style={{ display: "none" }} // Ocultamos el input
                 onChange={handleFileChange}
+                required
               />
 
               {/* Botón personalizado que dispara el input file */}
@@ -218,7 +283,9 @@ export const DetalleCasos = () => {
               </button>
               <button
                 className="boton-upload"
-                onClick={() => cargarArchivo("1")}
+                onClick={() => {
+                  cargarArchivo("1");
+                }}
               >
                 <img src={upload} alt="Upload" />
               </button>
@@ -230,6 +297,7 @@ export const DetalleCasos = () => {
                 type="file"
                 style={{ display: "none" }} // Ocultamos el input
                 onChange={handleFileChange2}
+                required
               />
 
               {/* Botón personalizado que dispara el input file */}
@@ -305,52 +373,57 @@ export const DetalleCasos = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>2024-10-01</td>
-                <td>Se creó el caso.</td>
-                <td>Oscar Florez</td>
-                <td>
-                  <button
-                    onClick={() => setModalOpen(true)}
-                    style={{
-                      backgroundColor: "rgba(134, 193, 39, 1)",
-                      border: "none",
-                      borderRadius: "5px",
-                      padding: "5px",
-                    }}
-                  >
-                    <img
-                      src={lapiz}
-                      alt="Editar Nota"
-                      style={{ width: "20px", height: "20px" }}
-                    />
-                  </button>
-                </td>
-              </tr>
+              {hCaso.map((caso, index) => (
+                <tr key={index}>
+                  <td>{caso.fecha.split("T")[0]}</td>
+                  <td>{caso.descripcion}</td>
+                  <td>{caso.usuario_responsable}</td>
+                  <td>
+                    <button
+                      onClick={() => setModalOpen(true)}
+                      style={{
+                        backgroundColor: "rgba(134, 193, 39, 1)",
+                        border: "none",
+                        borderRadius: "5px",
+                        padding: "5px",
+                      }}
+                    >
+                      <img
+                        src={lapiz}
+                        alt="Editar Nota"
+                        style={{ width: "20px", height: "20px" }}
+                      />
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
 
         {/* Ventana emergente para agregar notas */}
         {isModalOpen && (
-          <div className="modal">
-            <div className="modal-content">
-              <button
-                className="close-button"
-                onClick={() => setModalOpen(false)}
-              >
-                ✖
-              </button>
-              <h4>Añadir Nota</h4>
-              <input
-                type="text"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Escribe tu nota aquí..."
-              />
-              <button onClick={handleSaveNote}>Guardar</button>
+          <form onSubmit={handleSaveNote}>
+            <div className="modal">
+              <div className="modal-content">
+                <button
+                  className="close-button"
+                  onClick={() => setModalOpen(false)}
+                >
+                  ✖
+                </button>
+                <h4>Añadir Nota</h4>
+                <input
+                  type="text"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="Escribe tu nota aquí..."
+                  required
+                />
+                <button type="submit">Guardar</button>
+              </div>
             </div>
-          </div>
+          </form>
         )}
       </div>
       <br />

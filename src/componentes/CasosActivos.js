@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Franja from "./Franja";
 import menu from "../imagenes/menu.png";
 import lupa from "../imagenes/lupa.png";
+import Cookies from "js-cookie";
 
 export const CasosActivos = () => {
   const [menu2Open, setMenu2Open] = useState(false);
@@ -103,11 +104,10 @@ export const CasosActivos = () => {
       .catch((error) => {
         console.error("Error en la solicitud:", error);
       });
-
-    // Puedes ejecutar cualquier otra lógica aquí
   }, []);
 
   const handleVerDetalle = (numeroCaso) => {
+    Cookies.set("numeroCaso", numeroCaso , { expires: 1 }); // Expira en 1 día
     navigate(`/detalle-caso/${numeroCaso}`);
   };
 

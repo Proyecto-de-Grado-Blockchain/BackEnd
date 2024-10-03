@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Franja from "./Franja";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
 
 export const CrearCaso = () => {
   const [numeroCaso, setNumeroCaso] = useState("");
   const [nombrePaciente, setNombrePaciente] = useState("");
   const [showDialog, setShowDialog] = useState(false);
   const [showDialogErr, setShowDialogErr] = useState(false);
+  const useID = Cookies.get("userId");
 
   const navigate = useNavigate();
   const dialogStyle = {
@@ -35,38 +37,71 @@ export const CrearCaso = () => {
   };
 
   const handleSubmit = () => {
-    fetch("http://localhost:3100/casos/crear-caso", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        paciente: nombrePaciente,
-        caso: numeroCaso,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error en la respuesta del servidor");
-        }
-        return response
-          .json()
-          .then((data) => ({ status: response.status, data }));
+    if (numeroCaso === "" || nombrePaciente === "") {
+      setShowDialogErr(true); // Muestra el diálogo
+      setTimeout(() => {
+        setShowDialogErr(false); // Desaparece después de 2 segundos
+      }, 2000);
+    } else {
+      fetch("http://localhost:3100/casos/crear-caso", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          paciente: nombrePaciente,
+          caso: numeroCaso,
+          responsable: useID
+        }),
       })
-      .then((status, data) => {
-        if (status.status === 200) {
-          setShowDialog(true); // Muestra el diálogo
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error en la respuesta del servidor");
+          }
+          return response
+            .json()
+            .then((data) => ({ status: response.status, data }));
+        })
+        .then((status, data) => {
+          if (status.status === 200) {
+            setShowDialog(true);
+            setTimeout(() => {
+              setShowDialog(false);
+            }, 2000);
+            console.log("Numero" + numeroCaso);
+          }
+        })
+        .catch(() => {
+          setShowDialogErr(true);
           setTimeout(() => {
-            setShowDialog(false); // Desaparece después de 2 segundos
+            setShowDialogErr(false);
           }, 2000);
-        }
+        });
+      fetch("http://localhost:3100/historial/crear-historia", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          caso: numeroCaso,
+          des: "Se creó el caso.",
+        }),
       })
-      .catch(() => {
-        setShowDialogErr(true); // Muestra el diálogo
-        setTimeout(() => {
-          setShowDialogErr(false); // Desaparece después de 2 segundos
-        }, 2000);
-      });
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error en la respuesta del servidor");
+          }
+          return response
+            .json()
+            .then((data) => ({ status: response.status, data }));
+        })
+        .then((status, data) => {
+          if (status.status === 200) {
+            setNumeroCaso("")
+            setNombrePaciente("")
+          }
+        });
+    }
   };
 
   return (
@@ -76,7 +111,6 @@ export const CrearCaso = () => {
       <br />
       <div className="contenedor-crearCaso">
         <h2>Crear Nuevo Caso</h2>
-
         <div className="form-group">
           <label htmlFor="numeroCaso">Número del Caso:</label>
           <input

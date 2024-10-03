@@ -33,9 +33,9 @@ export const DocumentosExistentes = () => {
           </thead>
           <tbody>
             <tr>
-              <td>CASO013</td>
-              <td>Carlos Mora</td>
-              <td>Oscar Florez</td>
+              <td>CASO005</td>
+              <td>Ana Martinez</td>
+              <td>Jonathan Angulo</td>
             </tr>           
           </tbody>
         </table>
@@ -50,18 +50,6 @@ export const DocumentosExistentes = () => {
           
           <table className="document-table small-table">
             <tbody>
-              <tr>
-                <td>Tipo de documento:</td>
-                <td>Informe Médico</td>
-              </tr>
-              <tr>
-                <td>Fecha de Subida:</td>
-                <td>2024-10-01</td>
-              </tr>
-              <tr>
-                <td>Subido por:</td>
-                <td>Oscar Florez</td>
-              </tr>
             </tbody>
           </table>
         </div>
@@ -72,18 +60,7 @@ export const DocumentosExistentes = () => {
           
           <table className="document-table small-table">
             <tbody>
-              <tr>
-                <td>Tipo de documento:</td>
-                <td>Resultados de laboratorio</td>
-              </tr>
-              <tr>
-                <td>Fecha de Subida:</td>
-                <td>2024-10-01</td>
-              </tr>
-              <tr>
-                <td>Subido por:</td>
-                <td>Oscar Florez</td>
-              </tr>
+              
             </tbody>
           </table>
         </div>
@@ -94,18 +71,6 @@ export const DocumentosExistentes = () => {
           
           <table className="document-table small-table">
             <tbody>
-              <tr>
-                <td>Tipo de documento:</td>
-                <td>Fotografías Forenses</td>
-              </tr>
-              <tr>
-                <td>Fecha de Subida:</td>
-                <td>2024-10-01</td>
-              </tr>
-              <tr>
-                <td>Subido por:</td>
-                <td>Oscar Florez</td>
-              </tr>
             </tbody>
           </table>
         </div>

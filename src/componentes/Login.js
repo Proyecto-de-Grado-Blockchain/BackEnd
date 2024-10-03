@@ -4,6 +4,7 @@ import logo from "../imagenes/logo.png";
 import ojoA from "../imagenes/ojoA.png";
 import ojoC from "../imagenes/ojoC.png";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -39,6 +40,7 @@ export const Login = () => {
       .then((data) => {
         console.log("DATA: " + data);
         if (data != null ) {
+          Cookies.set("userId", data.id , { expires: 1 }); // Expira en 1 día
           sessionStorage.setItem("authenticated", "true");
           navigate("/home");
         } else {
