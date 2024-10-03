@@ -6,6 +6,7 @@ const { Caso, Usuario } = require("../db/models");
 
 router.use(express.json());
 
+//FILTROS
 router.post("/casos-activos", async (req, res) => {
   try {
     const { seleccion2, entrada2 } = req.body; // Obtenemos los datos del cuerpo de la solicitud
@@ -140,19 +141,37 @@ router.post("/casos-activos", async (req, res) => {
   }
 });
 
+
 router.get("/casos-activos", async (req, res) => {
   try {
-    const caso = await Caso.findAll({
-      where: {
-        estado: "Activo",
-      },
-      include: [
-        {
-          model: Usuario,
-          attributes: ["nombre_completo"],
+    const { numCaso } = req.query;
+    let caso = "";
+    if (!numCaso){
+      caso = await Caso.findAll({
+        where: {
+          estado: "Activo",
         },
-      ],
-    });
+        include: [
+          {
+            model: Usuario,
+            attributes: ["nombre_completo"],
+          },
+        ],
+      });
+    }else{
+      caso = await Caso.findAll({
+        where: {
+          numero_caso: numCaso,
+        },
+        include: [
+          {
+            model: Usuario,
+            attributes: ["nombre_completo"],
+          },
+        ],
+      });
+    }
+    
     const casosFormateados = caso.map((c) => {
       return {
         nombre_paciente: c.nombre_paciente,
@@ -169,6 +188,7 @@ router.get("/casos-activos", async (req, res) => {
   }
 });
 
+//FILTROS
 router.post("/casos-inactivos", async (req, res) => {
   try {
     const { seleccion2, entrada2 } = req.body; // Obtenemos los datos del cuerpo de la solicitud
@@ -305,17 +325,33 @@ router.post("/casos-inactivos", async (req, res) => {
 
 router.get("/casos-inactivos", async (req, res) => {
   try {
-    const caso = await Caso.findAll({
-      where: {
-        estado: "Inactivo",
-      },
-      include: [
-        {
-          model: Usuario,
-          attributes: ["nombre_completo"],
+    const { numCaso } = req.query;
+    let caso = "";
+    if (!numCaso){
+      caso = await Caso.findAll({
+        where: {
+          estado: "Inactivo",
         },
-      ],
-    });
+        include: [
+          {
+            model: Usuario,
+            attributes: ["nombre_completo"],
+          },
+        ],
+      });
+    }else{
+      caso = await Caso.findAll({
+        where: {
+          numero_caso: numCaso,
+        },
+        include: [
+          {
+            model: Usuario,
+            attributes: ["nombre_completo"],
+          },
+        ],
+      });
+    }
     const casosFormateados = caso.map((c) => {
       return {
         nombre_paciente: c.nombre_paciente,
@@ -340,14 +376,14 @@ router.post("/crear-caso", async (req, res) => {
     const day = today.getDate();
     const fullDay = year + "-" + month + "-" + day;
 
-    const { paciente, caso } = req.body;
+    const { paciente, caso, responsable } = req.body;
 
     const nuevoCaso = Caso.create({
       numero_caso: caso,
       nombre_paciente: paciente,
       fecha_creacion: fullDay,
       estado: "Activo",
-      id_usuario: 1
+      id_usuario: responsable
     })
     .then(caso => res.status(200).send(caso))
     .catch(error => res.status(400).send(error))

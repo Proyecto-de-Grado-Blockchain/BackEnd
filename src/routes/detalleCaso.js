@@ -24,7 +24,7 @@ const upload = multer({ storage: storage });
 router.post('/upload', upload.single('file'), async (req, res) => {
   try {
     // El archivo se ha subido correctamente
-    console.log('Archivo subido:', req.file);
+    const { tipoArchivo, numCaso, responsable } = req.body;
     const hashDoc = await hashPdf(req.file.path);
     const today = new Date();
     const year = today.getFullYear();
@@ -32,12 +32,13 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     const day = today.getDate();
     const fullDay = year + "-" + month + "-" + day;
     const assetId = `asset${Date.now()}`;
-    const args = [ "3", "CASO003", "TI", req.file.filename, "2024-09-30", "Oscar Florez" ];
-    connection.submitTransaction('blockchain_medicina_forense', 'agregarDocumento', ...args);
+    const args = [ "2", numCaso, tipoArchivo, req.file.filename, fullDay, responsable ];
+    const transactionResponse = await connection.submitTransaction('blockchain_medicina_forense', 'agregarDocumento', ...args);
     // Enviar la respuesta una vez que la transacción esté completa
     res.json({
         message: 'Archivo subido y transacción completada exitosamente',
         file: req.file,
+        transactionResponse: transactionResponse
     });
   } catch (error) {
     console.error('Error al subir el archivo:', error);

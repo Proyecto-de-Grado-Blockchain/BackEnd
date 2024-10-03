@@ -6,10 +6,9 @@ const Usuario = require('../db/models/Usuario');
 
 router.use(express.json());
 
-// Ruta para obtener todos los usuarios
 router.post('/login', async (req, res) => {
     try {
-      const { correoReq, contrasenaReq } = req.body; // Obtenemos los datos del cuerpo de la solicitud
+      const { correoReq, contrasenaReq } = req.body;
       
       // Validamos que los parámetros existan
       if (!correoReq || !contrasenaReq) {
@@ -18,7 +17,6 @@ router.post('/login', async (req, res) => {
   
       // Buscamos al usuario
       const usuario = await Usuario.findOne({
-        attributes:["correo", "contrasena"],
         where: {
             correo: correoReq,
             contrasena: contrasenaReq
