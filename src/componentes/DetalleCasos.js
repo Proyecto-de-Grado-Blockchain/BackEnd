@@ -3,6 +3,7 @@ import Franja from "./Franja";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import upload from "../imagenes/upload.png";
+import tuerca from "../imagenes/tuerca.png";
 import lapiz from "../imagenes/lapiz.png";
 import Cookies from "js-cookie";
 
@@ -356,6 +357,9 @@ export const DetalleCasos = () => {
               >
                 Ver documentos existentes
               </button>
+              <Link to="/gestion-caso">
+                            <img src={tuerca} className="img-tuerca" alt="Logo" />
+              </Link>
             </div>
           </div>
           <div>
