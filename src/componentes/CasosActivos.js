@@ -108,7 +108,7 @@ export const CasosActivos = () => {
 
   const handleVerDetalle = (numeroCaso) => {
     Cookies.set("numeroCaso", numeroCaso , { expires: 1 }); // Expira en 1 día
-    navigate(`/detalle-caso/${numeroCaso}`);
+    navigate(`/detalle-caso/`);
   };
 
   return (

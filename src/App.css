@@ -913,7 +913,7 @@ th {
   border: 1px solid #ccc; /* Opcional: borde para cada módulo */
   padding: 10px; /* Espaciado interno */
   border-radius: 5px; /* Esquinas redondeadas */
-  width: 300px; /* Ancho máximo de 300px */
+  width: 800px; /* Ancho máximo de 300px */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra opcional */
 }
 

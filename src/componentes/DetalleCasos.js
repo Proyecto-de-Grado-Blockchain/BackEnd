@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Franja from "./Franja";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import upload from "../imagenes/upload.png";
 import lapiz from "../imagenes/lapiz.png";
@@ -15,8 +16,11 @@ export const DetalleCasos = () => {
   const [showDialogErr, setShowDialogErr] = useState(false);
   const [caso, setCasos] = useState([]);
   const numeroCaso = Cookies.get("numeroCaso");
-  const responsableID = Cookies.get("userId")
+  const responsableID = Cookies.get("userId");
+  const dominio = "http://localhost:3100";
   const [hCaso, setHCasos] = useState([]);
+
+  const navigate = useNavigate();
 
   const dialogStyle = {
     position: "absolute",
@@ -68,13 +72,13 @@ export const DetalleCasos = () => {
 
   const handleSaveNote = async () => {
     let descripcionNota = "";
-    if(note === ""){
-      descripcionNota = "Se cargo un documento al caso"
-    }else{
+    if (note === "") {
+      descripcionNota = note;
+    } else {
       descripcionNota = note;
     }
 
-    await fetch("http://localhost:3100/historial/crear-historia", {
+    await fetch(`${dominio}/historial/crear-historia`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -82,6 +86,7 @@ export const DetalleCasos = () => {
       body: JSON.stringify({
         caso: numeroCaso,
         des: descripcionNota,
+        cookie: responsableID,
       }),
     })
       .then((response) => {
@@ -95,13 +100,14 @@ export const DetalleCasos = () => {
       .then((status, data) => {
         if (status.status === 200) {
           window.location.reload();
+          console.log(data);
         }
       });
     setModalOpen(false);
   };
 
   useEffect(() => {
-    fetch(`http://localhost:3100/casos/casos-activos?numCaso=${numeroCaso}`, {
+    fetch(`${dominio}/casos/casos-activos?numCaso=${numeroCaso}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -121,15 +127,12 @@ export const DetalleCasos = () => {
         console.error("Error en la solicitud:", error);
       });
 
-    fetch(
-      `http://localhost:3100/historial/consultar-historia?numCaso=${numeroCaso}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
+    fetch(`${dominio}/historial/consultar-historia?numCaso=${numeroCaso}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error en la respuesta del servidor");
@@ -149,20 +152,23 @@ export const DetalleCasos = () => {
     const formData = new FormData();
     if (numBoton === "1") {
       formData.append("file", selectedFile);
-      formData.append("tipoArchivo", "Informe médico")
+      formData.append("tipoArchivo", "Informe médico");
+      setNote("Se agregó un informe médico al caso.");
     } else if (numBoton === "2") {
       formData.append("file", selectedFile2);
-      formData.append("tipoArchivo", "Resultados de laboratorio")
+      formData.append("tipoArchivo", "Resultados de laboratorio");
+      setNote("Se agregaron resultados de laboratorio al caso.");
     } else if (numBoton === "3") {
       formData.append("file", selectedFile3);
-      formData.append("tipoArchivo", "Fotografías forenses")
+      formData.append("tipoArchivo", "Fotografías forenses");
+      setNote("Se agregaron fotografías forenses al caso.");
     }
 
     formData.append("numCaso", numeroCaso);
     formData.append("responsable", responsableID);
 
     try {
-      const response = await fetch("http://localhost:3100/docs/upload", {
+      const response = await fetch(`${dominio}/docs/upload`, {
         method: "POST",
         body: formData,
       });
@@ -175,8 +181,8 @@ export const DetalleCasos = () => {
             setSelectedFile(null);
             setSelectedFile2(null);
             setSelectedFile3(null);
+            handleSaveNote();
           }, 2000);
-          handleSaveNote();
         } else if (data.message === "Error al subir el archivo") {
           setShowDialogErr(true); // Muestra el diálogo
           setTimeout(() => {
@@ -188,6 +194,11 @@ export const DetalleCasos = () => {
       console.error("Error al subir el archivo:", error);
     }
   }
+
+  const handleVerDetalle = (estado) => {
+    Cookies.set("estado", estado, { expires: 1 }); // Expira en 1 día
+    navigate(`/documentos-existentes/`);
+  };
 
   return (
     <div className="container-casos-detalle">
@@ -334,11 +345,14 @@ export const DetalleCasos = () => {
               </button>
             </div>
             <div className="boton-con-upload">
-              <Link to="/documentos-existentes">
-                <button className="boton-principal">
-                  Ver documentos existentes
-                </button>
-              </Link>
+              <button
+                onClick={() => {
+                  handleVerDetalle("Activo");
+                }}
+                className="boton-principal"
+              >
+                Ver documentos existentes
+              </button>
             </div>
           </div>
           <div>
@@ -403,27 +417,25 @@ export const DetalleCasos = () => {
 
         {/* Ventana emergente para agregar notas */}
         {isModalOpen && (
-          <form onSubmit={handleSaveNote}>
-            <div className="modal">
-              <div className="modal-content">
-                <button
-                  className="close-button"
-                  onClick={() => setModalOpen(false)}
-                >
-                  ✖
-                </button>
-                <h4>Añadir Nota</h4>
-                <input
-                  type="text"
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  placeholder="Escribe tu nota aquí..."
-                  required
-                />
-                <button type="submit">Guardar</button>
-              </div>
+          <div className="modal">
+            <div className="modal-content">
+              <button
+                className="close-button"
+                onClick={() => setModalOpen(false)}
+              >
+                ✖
+              </button>
+              <h4>Añadir Nota</h4>
+              <input
+                type="text"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Escribe tu nota aquí..."
+                required
+              />
+              <button type="button" onClick={handleSaveNote}>Guardar</button>
             </div>
-          </form>
+          </div>
         )}
       </div>
       <br />

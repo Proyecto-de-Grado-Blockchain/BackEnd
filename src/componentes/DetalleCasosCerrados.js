@@ -72,6 +72,11 @@ export const DetalleCasosCerrados = () => {
       });
   }, []);
 
+  const handleVerDetalle = (estado) => {
+    Cookies.set("estado", estado, { expires: 1 }); // Expira en 1 día
+    navigate(`/documentos-existentes/`);
+  };
+
   return (
     <div className="container-casos-detalle">
       <Franja onLogout={() => console.log("Logout clicked")} />
@@ -151,11 +156,14 @@ export const DetalleCasosCerrados = () => {
 
           <div className="detalle-caso-botones">
             <div className="boton-con-upload">
-              <Link to="/documentos-existentes">
-                <button className="boton-principal">
-                  Ver documentos existentes
-                </button>
-              </Link>
+              <button
+                onClick={() => {
+                  handleVerDetalle("Inactivo");
+                }}
+                className="boton-principal"
+              >
+                Ver documentos existentes
+              </button>
               <button className="boton-upload" onClick={handleUploadClick}>
                 <img src={doc} alt="Document Upload" />
               </button>
