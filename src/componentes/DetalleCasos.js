@@ -144,18 +144,20 @@ export const DetalleCasos = () => {
       });
   }, []);
 
-  async function cargarArchivo(numBoton) {
+  const cargarArchivo= async (numBoton) => {
     const formData = new FormData();
-    console.log("Numero boton "+numBoton)
-    if (numBoton === "1") {
+    if (numBoton === "1" && note === "") {
       formData.append("file", selectedFile);
       formData.append("tipoArchivo", "Informe médico");
+      setNote("Se agregaron fotografías al caso.");
+      console.log("NOTA BOTON 1 " + note)
     } else if (numBoton === "2") {
       formData.append("file", selectedFile2);
       formData.append("tipoArchivo", "Resultados de laboratorio");
     } else if (numBoton === "3") {
       formData.append("file", selectedFile3);
       formData.append("tipoArchivo", "Fotografías forenses");
+      setNote("Se agregaron fotografías al caso.");
     }
 
     formData.append("numCaso", numeroCaso);
@@ -337,8 +339,9 @@ export const DetalleCasos = () => {
               <button
                 className="boton-upload"
                 onClick={() => {
+                  
                   cargarArchivo("3")
-                  setNote("Se agregaron fotografías al caso.");
+                  console.log(note)
                 }}
               >
                 <img src={upload} alt="Upload" />
