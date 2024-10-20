@@ -71,12 +71,8 @@ export const DetalleCasos = () => {
   };
 
   const handleSaveNote = async () => {
-    let descripcionNota = "";
-    if (note === "") {
-      descripcionNota = note;
-    } else {
-      descripcionNota = note;
-    }
+    const descripcionNota = note;
+    console.log("NOTAS " + note)
 
     await fetch(`${dominio}/historial/crear-historia`, {
       method: "POST",
@@ -150,23 +146,20 @@ export const DetalleCasos = () => {
 
   async function cargarArchivo(numBoton) {
     const formData = new FormData();
+    console.log("Numero boton "+numBoton)
     if (numBoton === "1") {
       formData.append("file", selectedFile);
       formData.append("tipoArchivo", "Informe médico");
-      setNote("Se agregó un informe médico al caso.");
     } else if (numBoton === "2") {
       formData.append("file", selectedFile2);
       formData.append("tipoArchivo", "Resultados de laboratorio");
-      setNote("Se agregaron resultados de laboratorio al caso.");
     } else if (numBoton === "3") {
       formData.append("file", selectedFile3);
       formData.append("tipoArchivo", "Fotografías forenses");
-      setNote("Se agregaron fotografías forenses al caso.");
     }
 
     formData.append("numCaso", numeroCaso);
     formData.append("responsable", responsableID);
-
     try {
       const response = await fetch(`${dominio}/docs/upload`, {
         method: "POST",
@@ -296,6 +289,7 @@ export const DetalleCasos = () => {
                 className="boton-upload"
                 onClick={() => {
                   cargarArchivo("1");
+                  setNote("Se agregó un informe médico al caso.");
                 }}
               >
                 <img src={upload} alt="Upload" />
@@ -319,7 +313,10 @@ export const DetalleCasos = () => {
               </button>
               <button
                 className="boton-upload"
-                onClick={() => cargarArchivo("2")}
+                onClick={() => {
+                  cargarArchivo("2")
+                  setNote("Se agregaron resultados de laboratorio al caso.");
+                }}
               >
                 <img src={upload} alt="Upload" />
               </button>
@@ -339,7 +336,10 @@ export const DetalleCasos = () => {
               </button>
               <button
                 className="boton-upload"
-                onClick={() => cargarArchivo("3")}
+                onClick={() => {
+                  cargarArchivo("3")
+                  setNote("Se agregaron fotografías al caso.");
+                }}
               >
                 <img src={upload} alt="Upload" />
               </button>
@@ -383,7 +383,7 @@ export const DetalleCasos = () => {
                 <th>Fecha</th>
                 <th>Descripción de la acción realizada</th>
                 <th>Usuario responsable</th>
-                <th>Notas</th>
+                <th>Crear notas</th>
               </tr>
             </thead>
             <tbody>
@@ -433,7 +433,9 @@ export const DetalleCasos = () => {
                 placeholder="Escribe tu nota aquí..."
                 required
               />
-              <button type="button" onClick={handleSaveNote}>Guardar</button>
+              <button type="button" onClick={handleSaveNote}>
+                Guardar
+              </button>
             </div>
           </div>
         )}

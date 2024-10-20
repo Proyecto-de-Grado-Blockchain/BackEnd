@@ -8,6 +8,7 @@ import carruselimg1 from "../imagenes/carruselimg1.png";
 import carruselimg2 from "../imagenes/carruselimg2.png";
 import carruselimg3 from "../imagenes/carruselimg3.png";
 import Cookies from "js-cookie";
+import fondo from '../imagenes/unamed.jpg';
 
 export const Home = () => {
   const dialogStyleErr = {
@@ -60,18 +61,22 @@ export const Home = () => {
   };
 
   return (
+
     <div className="container-fluid d-flex flex-column">
       <Franja onLogout={() => console.log("Logout clicked")} />
-      {/* Carrusel */}
-      <div
+
+        
+     {/* Carrusel */}
+     <div
         id="carouselExampleCaptions"
         className="carousel slide"
         data-bs-ride="carousel"
         data-bs-interval="3000"
+        style={{ backgroundImage: `url(${fondo})`, backgroundSize: 'cover', backgroundPosition: 'center', padding: '10px 0  ' }} 
       >
         <div className="carousel-inner">
           <div className="carousel-item active">
-            <div className="d-block w-100 bg-light text-center p-4">
+            <div className="d-block p-0 text-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
               <h4>Gestión de Casos Forenses</h4>
               <p>
                 Desde aquí puedes gestionar y acceder a la información forense
@@ -82,12 +87,12 @@ export const Home = () => {
               <img
                 src={carruselimg3}
                 className="imagenesCarrusel"
-                style={{ height: "120px" }}
-              ></img>
+                style={{ height: "80px" }}
+               alt="Gestión de Casos Forenses" />
             </div>
           </div>
           <div className="carousel-item">
-            <div className="d-block w-100 bg-light text-center p-4">
+            <div className="d-block p-0 text-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
               <h4>Seguridad de Datos</h4>
               <p>
                 Implementamos tecnologías avanzadas para garantizar la seguridad
@@ -98,12 +103,12 @@ export const Home = () => {
               <img
                 src={carruselimg2}
                 className="imagenesCarrusel"
-                style={{ height: "120px" }}
-              ></img>
+                style={{ height: "80px" }}
+               alt="Seguridad de Datos" />
             </div>
           </div>
           <div className="carousel-item">
-            <div className="d-block w-100 bg-light text-center p-4">
+            <div className="d-block p-0 text-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)'}}>
               <h4>Acceso Simplificado</h4>
               <p>
                 Accede a la información forense de manera intuitiva y fácil.
@@ -114,8 +119,8 @@ export const Home = () => {
               <img
                 src={carruselimg1}
                 className="imagenesCarrusel"
-                style={{ height: "120px" }}
-              ></img>
+                style={{ height: "80px" }}
+               alt="Acceso Simplificado" />
             </div>
           </div>
         </div>
@@ -147,13 +152,7 @@ export const Home = () => {
 
       <br />
       <hr />
-      <div>
-        {showDialogErr && (
-          <div style={dialogStyleErr}>
-            <p>No tiene el rol permitido para acceder a esta sección</p>
-          </div>
-        )}
-      </div>
+      
       {/* Módulos principales */}
       <div className="modules-container">
         <div className="module">
@@ -191,28 +190,9 @@ export const Home = () => {
             <button className="btn btn-primary module-btn">Ingresar</button>
           </Link>
         </div>
-        <div className="module">
-          <img
-            src={crear}
-            alt="Centro de Ayuda y Soporte"
-            className="module-image"
-          />
-          <h4 className="module-title">Crear Nuevo Caso</h4>
-          <p className="module-text">
-            En este módulo, podrás crear nuevos casos, agregando la inforación
-            necesaria para cada caso.
-          </p>
-          <br />
-          <br />
-          <br />
-          <br />
-          <Link to={deshabilitarBotonCrearCaso} onClick={alerta}>
-            <button className="btn btn-primary module-btn">Ingresar</button>
-          </Link>
-        </div>
       </div>
 
-      {/* Margen verde al final de la pantalla */}
+      <br/><br/> 
       <div className="footer-margin"></div>
     </div>
   );

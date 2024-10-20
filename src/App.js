@@ -10,6 +10,8 @@ import {DocumentosExistentes} from './componentes/DocumentosExistentes';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { CrearCaso } from './componentes/CrearCaso';
 import { AgregarDocumentos } from './componentes/AgregarDocumentos';
+import { CrearUsuario } from './componentes/CrearUsuario'
+import { GestionCaso } from './componentes/GestionCaso'
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
             <Route path="/detalle-casosCerrados" element={<DetalleCasosCerrados/>} />
             <Route path="/crear-caso" element={<CrearCaso/>} />
             <Route path="/agregar-documentos" element={<AgregarDocumentos/>} />
+            <Route path="/crear-usuario" element={<CrearUsuario/>} />
+            <Route path="/gestion-caso" element={<GestionCaso/>} />
           </Routes>
         </header>
       </div>

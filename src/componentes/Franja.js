@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom'; 
 import logo2 from '../imagenes/logo2.png';
 import menu from '../imagenes/menu.png';
 import iconoMenu from '../imagenes/iconoMenu.png';
-import { useNavigate } from 'react-router-dom';
+import crear from '../imagenes/crear.png';
+
 
 const Franja = ({ onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [actionMenuOpen, setActionMenuOpen] = useState(false); // Estado para el nuevo menú de acción
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -18,8 +21,6 @@ const Franja = ({ onLogout }) => {
 
   const formattedDate = currentDateTime.toLocaleDateString();
   const formattedTime = currentDateTime.toLocaleTimeString();
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const authenticated = sessionStorage.getItem('authenticated');
@@ -37,7 +38,9 @@ const Franja = ({ onLogout }) => {
     <div className="container-fluid d-flex flex-column">
       <div className="row align-items-center bg-light shadow-sm" style={{ height: '110px' }}>
         <div className="col-3 d-flex align-items-center">
+        <Link to="/home" className="nav-link">
           <img src={logo2} className="img-fluid" alt="Logo" />
+          </Link>
         </div>
         <div className="col-6 text-center">
           <h2 className="m-0">Blockchain Medicina Forense</h2>
@@ -59,6 +62,7 @@ const Franja = ({ onLogout }) => {
               <div className="d-flex flex-column h-100">
                 <div className="p-3 flex-grow-1">
                   <ul className="nav flex-column">
+                    
                     <li className="nav-item">
                       <Link to="/home" className="nav-link">
                         <img src={iconoMenu} alt="Inicio" className="nav-icon" />
@@ -67,7 +71,7 @@ const Franja = ({ onLogout }) => {
                           <span className="nav-description">Página principal del sistema.</span>
                         </div>
                       </Link>
-                    </li>
+                      </li>
                     <li className="nav-item">
                       <Link to="/casos-activos" className="nav-link">
                         <img src={iconoMenu} alt="Casos Activos" className="nav-icon" />
@@ -85,16 +89,6 @@ const Franja = ({ onLogout }) => {
                           <span className="nav-description">Consulta de casos finalizados o archivados.</span>
                         </div>
                       </Link>
-                    </li>
-
-                    <li className="nav-item">
-                    <Link to="/crear-caso" className="nav-link">
-                        <img src={iconoMenu} alt="CrearCaso" className="nav-icon" />
-                        <div className="nav-text">
-                          <span className="nav-title">Crear Caso</span>
-                          <span className="nav-description">Realizar la creación de un nuevo paciente o caso.</span>
-                        </div>
-                        </Link>
                     </li>
 
                     <li className="nav-item">
@@ -118,11 +112,30 @@ const Franja = ({ onLogout }) => {
                     </li>
                   </ul>
                 </div>
+                <div className="p-3 border-top mt-auto">
                   <button className="btn btn-primary w-100 logout-btn" onClick={handleLogout}>
                     Cerrar Sesión
                   </button>
+                </div>
+
               </div>
             </div>
+          </div>
+        
+          <div className="action-container ms-3">
+            <button className="btn btn-light" onClick={() => setActionMenuOpen(!actionMenuOpen)} style={{ border: 'none', background: 'transparent', padding: 0 }}>
+              <img src={crear} alt="Crear" style={{ width: '50px', height: '50px' }} /> {/* Icono de crear */}
+            </button>
+            {actionMenuOpen && (
+              <div className="action-dropdown">
+                <Link to="/crear-usuario" className="nav-link">
+                  <button className="btn btn-light">Crear Usuario</button>
+                </Link>
+                <Link to="/crear-caso" className="nav-link">
+                  <button className="btn btn-light">Crear Caso</button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
