@@ -7,7 +7,7 @@ router.use(express.json());
 
 router.post("/crear-historia", async (req, res) => {
   try {
-    const { caso, des } = req.body;
+    const { caso, des, cookie } = req.body;
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
@@ -16,12 +16,14 @@ router.post("/crear-historia", async (req, res) => {
     const casoH = await Caso.findOne({
       where: {
         numero_caso: caso,
-      }
+      },
     });
 
     const numCaso = casoH.dataValues.id;
-    const userR = casoH.dataValues.id_usuario;
-    console.log(fullDay)
+    const userR = cookie;
+    console.log("Usuario => " + userR);
+    console.log("Usuario => " + numCaso);
+
 
     const historiacaso = await HistorialCaso.create({
       id_caso: numCaso,
@@ -31,7 +33,7 @@ router.post("/crear-historia", async (req, res) => {
       usuario_responsable: userR,
     })
       .then((hcaso) => res.status(200).send(hcaso))
-      .catch(error => res.status(400).send(error))
+      .catch((error) => res.status(400).send(error));
   } catch (error) {
     console.error("Error al crear el historial del casos:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -57,19 +59,25 @@ router.get("/consultar-historia", async (req, res) => {
     const userR = casoH.dataValues.id_usuario;
 
     const historiacaso = await HistorialCaso.findAll({
-      where:{
-        id_caso: idCaso
-      }
-    })
+      where: {
+        id_caso: idCaso,
+      },
+    });
 
-    const historiaCasoFormateado = historiacaso.map((hc) =>{
+    const historiaCasoFormateado = historiacaso.map((hc) => {
+      // const usuario = Usuario.findOne({
+      //   where: {
+      //       id: parseInt(hc.usuario_responsable)
+      //   },
+      //   attributes: ['nombre_completo'] 
+      // });
       return {
         fecha: hc.fecha,
         descripcion: hc.descripcion,
-        usuario_responsable: userR
-      }
-    })
-    res.json(historiaCasoFormateado)
+        usuario_responsable: hc.usuario_responsable,
+      };
+    });
+    res.json(historiaCasoFormateado);
   } catch (error) {
     console.error("Error al consultar el historial del caso:", error);
     res.status(500).json({ error: "Error interno del servidor" });

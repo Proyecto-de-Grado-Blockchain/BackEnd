@@ -11,7 +11,14 @@ app.use(express.json());
 
 // Configuración de CORS
 app.use(cors({
-    origin: 'http://localhost:3000', // Cambia esto al origen desde donde haces la solicitud
+    origin: function (origin, callback) {
+        // Permite solicitudes desde localhost y desde cualquier URL generada por ngrok
+        if (!origin || origin === 'http://localhost:3000' || origin.includes('ngrok-free.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('No permitido por CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));

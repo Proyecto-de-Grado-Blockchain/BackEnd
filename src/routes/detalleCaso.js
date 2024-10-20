@@ -1,48 +1,88 @@
-const express = require('express');
-const multer = require('multer');
+const express = require("express");
+const multer = require("multer");
 const router = express.Router();
-const fs = require('fs');
-const pdfParse = require('pdf-parse');
-const crypto = require('crypto');
-const connection = require('../config/transactionHandler');
+const fs = require("fs");
+const pdfParse = require("pdf-parse");
+const crypto = require("crypto");
+const connection = require("../config/transactionHandler");
+const Documento = require("../db/models/Documento");
+const { Caso } = require("../db/models");
 
 router.use(express.json());
 
 // Configuración de multer para almacenar archivos
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, '/home/administrador/BackEnd/src/uploads'); // Carpeta donde se guardarán los archivos
+    cb(null, "/home/administrador/BackEnd/src/uploads"); // Carpeta donde se guardarán los archivos
   },
   filename: (req, file, cb) => {
-    cb(null,`${Date.now()}-${file.originalname}`); // Nombre único para el archivo
+    cb(null, `${Date.now()}-${file.originalname}`); // Nombre único para el archivo
   },
 });
 
 const upload = multer({ storage: storage });
 
 // Ruta para recibir el archivo
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post("/upload", upload.single("file"), async (req, res) => {
   try {
     // El archivo se ha subido correctamente
     const { tipoArchivo, numCaso, responsable } = req.body;
-    const hashDoc = await hashPdf(req.file.path);
+    // Array con los tipos MIME de imágenes
+    const imageMimeTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/bmp",
+      "image/tiff",
+      "image/webp",
+      "image/svg+xml",
+      "image/x-icon",
+      "image/heic",
+    ];
+    console.log(req.file);
+    let hashDoc = ""
+    if (req.file.mimetype === "application/pdf"){
+      hashDoc = await hashPdf(req.file.path);
+    }else if (imageMimeTypes.includes(req.file.mimetype)){
+      hashDoc = await hashImage(req.file.path);
+    }
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth();
     const day = today.getDate();
     const fullDay = year + "-" + month + "-" + day;
-    const assetId = `asset${Date.now()}`;
-    const args = [ "2", numCaso, tipoArchivo, req.file.filename, fullDay, responsable ];
-    const transactionResponse = await connection.submitTransaction('blockchain_medicina_forense', 'agregarDocumento', ...args);
+    const id = fs.readFileSync("src/config/idDoc.txt", "utf8");
+    const args = [
+      id,
+      numCaso,
+      tipoArchivo,
+      req.file.filename,
+      fullDay,
+      responsable,
+      hashDoc,
+    ];
+    const transactionResponse = await connection.submitTransaction(
+      "blockchain_medicina_forense",
+      "agregarDocumento",
+      ...args
+    );
+
+    const getCaso = Caso.findOne({
+      where: {
+        numero_caso: numCaso,
+      },
+    });
+    const idInt = parseInt(id) + 1;
+    fs.writeFileSync("src/config/idDoc.txt", idInt + "", "utf8");
     // Enviar la respuesta una vez que la transacción esté completa
     res.json({
-        message: 'Archivo subido y transacción completada exitosamente',
-        file: req.file,
-        transactionResponse: transactionResponse
+      message: "Archivo subido y transacción completada exitosamente",
+      file: req.file,
+      transactionResponse: transactionResponse,
     });
   } catch (error) {
-    console.error('Error al subir el archivo:', error);
-    res.status(500).json({ message: 'Error al subir el archivo' });
+    console.error("Error al subir el archivo:", error);
+    res.status(500).json({ message: "Error al subir el archivo" });
   }
 });
 
@@ -61,10 +101,34 @@ async function hashPdf(filePath) {
     const hashedContent = hash.digest("hex");
 
     console.log("Hash del PDF:", hashedContent);
-    return hashedContent
+    return hashedContent;
   } catch (err) {
     return "Error al procesar el PDF:", err;
   }
+}
+
+async function hashImage(filePath) {
+  try {
+    // Lee el archivo IMG
+    const dataBuffer = fs.readFileSync(filePath);
+    // Genera el hash del contenido del PDF
+    const hash = crypto.createHash("sha256");
+    hash.update(dataBuffer);
+    const hashedContent = hash.digest("hex");
+
+    console.log("Hash de la IMG:", hashedContent);
+    return hashedContent;
+  } catch (err) {
+    return "Error al procesar la IMG:", err;
+  }
+}
+
+async function obtenerInfoDoc() {
+  const transactionResponse = await connection.submitTransaction(
+    "blockchain_medicina_forense",
+    "agregarDocumento",
+    ...args
+  );
 }
 
 module.exports = router;
