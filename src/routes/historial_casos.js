@@ -21,9 +21,6 @@ router.post("/crear-historia", async (req, res) => {
 
     const numCaso = casoH.dataValues.id;
     const userR = cookie;
-    console.log("Usuario => " + userR);
-    console.log("Usuario => " + numCaso);
-
 
     const historiacaso = await HistorialCaso.create({
       id_caso: numCaso,
