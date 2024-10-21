@@ -452,7 +452,7 @@ export const DetalleCasos = () => {
       <br />
       <br />
       <br />
-      <div className="detalle-margin"></div>
+      <div className="footer-margin"></div>
     </div>
   );
 };

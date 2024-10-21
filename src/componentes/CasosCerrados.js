@@ -228,7 +228,7 @@ export const CasosCerrados = () => {
         )}
       </div>
 
-      <div className="activos-margin"></div>
+      <div className="footer-margin"></div>
     </div>
   );
 };
