@@ -71,10 +71,7 @@ export const DetalleCasos = () => {
     document.getElementById("hiddenFileInput3").click();
   };
 
-  const handleSaveNote = async () => {
-    const descripcionNota = note;
-    console.log("NOTAS " + note)
-
+  const handleSaveNote = async (notas) => {
     await fetch(`${dominio}/historial/crear-historia`, {
       method: "POST",
       headers: {
@@ -82,7 +79,7 @@ export const DetalleCasos = () => {
       },
       body: JSON.stringify({
         caso: numeroCaso,
-        des: descripcionNota,
+        des: notas,
         cookie: responsableID,
       }),
     })
@@ -147,20 +144,16 @@ export const DetalleCasos = () => {
 
   const cargarArchivo= async (numBoton) => {
     const formData = new FormData();
-    if (numBoton === "1" && note === "") {
+    if (numBoton === "1") {
       formData.append("file", selectedFile);
       formData.append("tipoArchivo", "Informe médico");
-      setNote("Se agregaron fotografías al caso.");
-      console.log("NOTA BOTON 1 " + note)
     } else if (numBoton === "2") {
       formData.append("file", selectedFile2);
       formData.append("tipoArchivo", "Resultados de laboratorio");
     } else if (numBoton === "3") {
       formData.append("file", selectedFile3);
       formData.append("tipoArchivo", "Fotografías forenses");
-      setNote("Se agregaron fotografías al caso.");
     }
-
     formData.append("numCaso", numeroCaso);
     formData.append("responsable", responsableID);
     try {
@@ -169,7 +162,6 @@ export const DetalleCasos = () => {
         body: formData,
       });
       await response.json().then((data) => {
-        console.log(data);
         if (data.transactionResponse) {
           setShowDialog(true); // Muestra el diálogo
           setTimeout(() => {
@@ -177,7 +169,13 @@ export const DetalleCasos = () => {
             setSelectedFile(null);
             setSelectedFile2(null);
             setSelectedFile3(null);
-            handleSaveNote();
+            if (numBoton === "1"){
+              handleSaveNote("Se agregó un informe médico al caso."); 
+            }else if (numBoton === "2" ){
+              handleSaveNote("Se agregaron resultados de laboratorio al caso.");
+            }else if (numBoton === "3" ){
+              handleSaveNote("Se agregaron fotografías al caso.");
+            }
           }, 2000);
         } else if (data.message === "Error al subir el archivo") {
           setShowDialogErr(true); // Muestra el diálogo
@@ -440,7 +438,7 @@ export const DetalleCasos = () => {
                 placeholder="Escribe tu nota aquí..."
                 required
               />
-              <button type="button" onClick={handleSaveNote}>
+              <button type="button" onClick={handleSaveNote(note)}>
                 Guardar
               </button>
             </div>
