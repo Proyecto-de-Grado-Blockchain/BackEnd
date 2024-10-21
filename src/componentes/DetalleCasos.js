@@ -146,13 +146,13 @@ export const DetalleCasos = () => {
     const formData = new FormData();
     if (numBoton === "1") {
       formData.append("file", selectedFile);
-      formData.append("tipoArchivo", "Informe médico");
+      formData.append("tipoArchivo", "Informe medico");
     } else if (numBoton === "2") {
       formData.append("file", selectedFile2);
       formData.append("tipoArchivo", "Resultados de laboratorio");
     } else if (numBoton === "3") {
       formData.append("file", selectedFile3);
-      formData.append("tipoArchivo", "Fotografías forenses");
+      formData.append("tipoArchivo", "Fotografias forenses");
     }
     formData.append("numCaso", numeroCaso);
     formData.append("responsable", responsableID);

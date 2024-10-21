@@ -10,6 +10,7 @@ export const DocumentosExistentes = () => {
   const numeroCaso = Cookies.get("numeroCaso");
   const estado = Cookies.get("estado");
   const dominio = "http://localhost:3100";
+  const [documentos, setDocs] = useState([]);
 
   useEffect(() => {
     if (estado === "Activo") {
@@ -27,7 +28,6 @@ export const DocumentosExistentes = () => {
         })
         .then((data) => {
           setCasos(data[0]);
-          console.log(data[0]);
         })
         .catch((error) => {
           console.error("Error en la solicitud:", error);
@@ -47,7 +47,6 @@ export const DocumentosExistentes = () => {
         })
         .then((data) => {
           setCasos(data[0]);
-          console.log(data[0]);
         })
         .catch((error) => {
           console.error("Error en la solicitud:", error);
@@ -58,14 +57,16 @@ export const DocumentosExistentes = () => {
       headers: {
         "Content-Type": "application/json",
       },
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error("Error en la respuesta del servidor");
-      }
-      return response.json();
-    }).then((data) => {
-      console.log(data);
     })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error en la respuesta del servidor");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setDocs(data["transactionResponse"]);
+      });
   }, []);
 
   return (
@@ -112,16 +113,33 @@ export const DocumentosExistentes = () => {
       <div className="DocumentosExistentes">
         <div className="documento">
           <img
-            // src={informe}
-            src="http://localhost:3100/uploads/1729489526967-Captura%20desde%202024-09-10%2023-53-45.png"
+            src={informe}
+            //src="http://localhost:3100/uploads/1729489526967-Captura%20desde%202024-09-10%2023-53-45.png"
             alt="Gestión de Casos Activos"
             className="module-image"
           />
           <h4 className="module-title">Informe Médico</h4>
 
-          <table className="document-table small-table">
+          <table className="historial-caso-tabla">
             <tbody>
-              <tr>{/*Ciclo de los documentos del caso*/}</tr>
+              {documentos.length > 0 &&
+                documentos.map((doc, index) => {
+                  if (doc["record"]["tipoDocumento"] === "Informe medico") {
+                    return (
+                      <tr key={index}>
+                        {console.log(doc["record"])}
+                        <td>
+                          <a
+                            href={`${dominio}/uploads/${doc["record"]["nombreArchivo"]}`}
+                            target="_blank"
+                          >
+                            {doc["record"]["nombreArchivo"]}
+                          </a>
+                        </td>
+                      </tr>
+                    );
+                  }
+                })}
             </tbody>
           </table>
         </div>
@@ -134,9 +152,26 @@ export const DocumentosExistentes = () => {
           />
           <h4 className="module-title">Resultados de laboratorio</h4>
 
-          <table className="document-table small-table">
+          <table className="historial-caso-tabla">
             <tbody>
-              <tr>{/*Ciclo de los documentos del caso*/}</tr>
+              {documentos.length > 0 &&
+                documentos.map((doc, index) => {
+                  if (doc["record"]["tipoDocumento"] === "Resultados de laboratorio") {
+                    return (
+                      <tr key={index}>
+                        {console.log(doc["record"])}
+                        <td>
+                          <a
+                            href={`${dominio}/uploads/${doc["record"]["nombreArchivo"]}`}
+                            target="_blank"
+                          >
+                            {doc["record"]["nombreArchivo"]}
+                          </a>
+                        </td>
+                      </tr>
+                    );
+                  }
+                })}
             </tbody>
           </table>
         </div>
@@ -149,9 +184,26 @@ export const DocumentosExistentes = () => {
           />
           <h4 className="module-title">Fotografías Forenses</h4>
 
-          <table className="document-table small-table">
+          <table className="historial-caso-tabla">
             <tbody>
-              <tr>{/*Ciclo de los documentos del caso*/}</tr>
+              {documentos.length > 0 &&
+                documentos.map((doc, index) => {
+                  if (doc["record"]["tipoDocumento"] === "Fotografias forenses") {
+                    return (
+                      <tr key={index}>
+                        {console.log(doc["record"])}
+                        <td>
+                          <a
+                            href={`${dominio}/uploads/${doc["record"]["nombreArchivo"]}`}
+                            target="_blank"
+                          >
+                            {doc["record"]["nombreArchivo"]}
+                          </a>
+                        </td>
+                      </tr>
+                    );
+                  }
+                })}
             </tbody>
           </table>
         </div>
