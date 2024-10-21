@@ -53,7 +53,19 @@ export const DocumentosExistentes = () => {
           console.error("Error en la solicitud:", error);
         });
     }
-    
+    fetch(`${dominio}/casos/obtenerDocumentos?numCaso=${numeroCaso}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error("Error en la respuesta del servidor");
+      }
+      return response.json();
+    }).then((data) => {
+      console.log(data[0]);
+    })
   }, []);
 
   return (
