@@ -123,12 +123,43 @@ async function hashImage(filePath) {
   }
 }
 
-async function obtenerInfoDoc() {
-  const transactionResponse = await connection.submitTransaction(
-    "blockchain_medicina_forense",
-    "agregarDocumento",
-    ...args
-  );
-}
+
+router.get("/obtenerDocumentos", async (req, res) => {
+  try {
+    const { numCaso } = req.query;
+
+    // Llamar a la función de transacción en la blockchain
+    const transactionResponse = await connection.queryTransaction(
+      "blockchain_medicina_forense",
+      "consultarDocumentosCaso",
+      numCaso
+    );
+
+    let textResponse = Object.values(transactionResponse).map(code => String.fromCharCode(code)).join('');
+    const jsonTextResponse = JSON.parse(textResponse);
+    console.log(jsonTextResponse)
+
+    fs.readdir("/home/administrador/BackEnd/src/uploads", (err, files) => {
+      if (err) {
+        console.error("Error al leer la carpeta de uploads:", err);
+        return res.status(500).json({ message: "Error al leer la carpeta de uploads." });
+      }
+
+      // Filtrar los archivos según los nombres en el JSON
+      const documentos = jsonTextResponse.map(doc => doc.record.nombreArchivo);
+      const documentosFiltrados = files.filter(file => documentos.includes(file));
+
+      // Responder con la información de la transacción y los documentos filtrados
+      res.json({
+        message: "Información obtenida exitosamente",
+        transactionResponse: jsonTextResponse,
+        documentos: documentosFiltrados // Lista de documentos filtrados
+      });
+    });
+  } catch (error) {
+    console.error("Error al obtener los documentos del caso:", error);
+    res.status(500).json({ message: "Error al obtener los documentos del caso" });
+  }
+});
 
 module.exports = router;
