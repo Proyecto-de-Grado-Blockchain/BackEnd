@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const sequelize = require('./config/config');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,10 +34,16 @@ app.use("/docs", docsRoutes);
 const hcasosRoutes = require('./routes/historial_casos');
 app.use("/historial", hcasosRoutes);
 
+// Configura la ruta para servir archivos estáticos
+const uploadsPath = path.join(__dirname, 'uploads');
+app.use('/uploads', express.static(uploadsPath));
+
 // Iniciar el servidor y conectar a la base de datos
 sequelize.sync().then(() => {
     app.listen(PORT, () => {
         console.log(`Servidor corriendo en el puerto ${PORT}`);
+        console.log('Ruta de uploads:', uploadsPath);
+
     });
 }).catch(err => {
     console.error('Error al conectar con la base de datos:', err);

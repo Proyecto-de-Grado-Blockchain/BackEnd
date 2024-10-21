@@ -145,15 +145,10 @@ router.get("/obtenerDocumentos", async (req, res) => {
         return res.status(500).json({ message: "Error al leer la carpeta de uploads." });
       }
 
-      // Filtrar los archivos según los nombres en el JSON
-      const documentos = jsonTextResponse.map(doc => doc.record.nombreArchivo);
-      const documentosFiltrados = files.filter(file => documentos.includes(file));
-
       // Responder con la información de la transacción y los documentos filtrados
       res.json({
         message: "Información obtenida exitosamente",
         transactionResponse: jsonTextResponse,
-        documentos: documentosFiltrados // Lista de documentos filtrados
       });
     });
   } catch (error) {
