@@ -53,7 +53,7 @@ export const DocumentosExistentes = () => {
           console.error("Error en la solicitud:", error);
         });
     }
-    fetch(`${dominio}/casos/obtenerDocumentos?numCaso=${numeroCaso}`, {
+    fetch(`${dominio}/docs/obtenerDocumentos?numCaso=${numeroCaso}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -64,7 +64,7 @@ export const DocumentosExistentes = () => {
       }
       return response.json();
     }).then((data) => {
-      console.log(data[0]);
+      console.log(data);
     })
   }, []);
 
@@ -112,7 +112,8 @@ export const DocumentosExistentes = () => {
       <div className="DocumentosExistentes">
         <div className="documento">
           <img
-            src={informe}
+            // src={informe}
+            src="http://localhost:3100/uploads/1729489526967-Captura%20desde%202024-09-10%2023-53-45.png"
             alt="Gestión de Casos Activos"
             className="module-image"
           />
