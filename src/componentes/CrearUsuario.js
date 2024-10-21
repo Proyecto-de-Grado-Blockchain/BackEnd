@@ -24,10 +24,26 @@ export const CrearUsuario = () => {
   };
 
   const handleCrearUsuario = () => {
-    console.log('Nombre:', nombreUsuario);
-    console.log('Tipo de Usuario:', tipoUsuario);
-    console.log('Correo:', correo);
-    console.log('Contraseña:', contrasena);
+
+    fetch("http://localhost:3100/usuarios/CrearUsuario", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        caso: numeroCaso,
+        des: "Se creó el usuario.",
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error en la respuesta del servidor");
+        }
+        return response
+          .json()
+          .then((data) => ({ status: response.status, data }));
+      })
+
   };
 
   return (
