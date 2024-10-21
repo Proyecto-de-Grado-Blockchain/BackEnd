@@ -92,16 +92,6 @@ const Franja = ({ onLogout }) => {
                     </li>
 
                     <li className="nav-item">
-                    <Link to="/agregar-documentos" className="nav-link">
-                        <img src={iconoMenu} alt="agregarDoc" className="nav-icon" />
-                        <div className="nav-text">
-                          <span className="nav-title">Agregar Doccumentos</span>
-                          <span className="nav-description">Agregar documentos al caso creado.</span>
-                        </div>
-                        </Link>
-                    </li>
-
-                    <li className="nav-item">
                     <Link to="/centro-ayuda" className="nav-link">
                         <img src={iconoMenu} alt="Ayuda" className="nav-icon" />
                         <div className="nav-text">

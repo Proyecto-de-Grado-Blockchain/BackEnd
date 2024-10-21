@@ -51,9 +51,7 @@ export const Ayuda = () => {
           />
           <h4 className="module-title">Manual de Usuario</h4>
           <p>
-            Instrucciones paso a paso para que los usuarios finales puedan
-            utilizar las funciones y características del sistema de manera
-            eficiente.
+            Aquí encontrarás el manual de la applicación, específico para cada usuario o rol.
           </p>
           <iframe
             src={documentUrl}
