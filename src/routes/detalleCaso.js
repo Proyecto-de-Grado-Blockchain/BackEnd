@@ -7,7 +7,7 @@ const crypto = require("crypto");
 const connection = require("../config/transactionHandler");
 const Documento = require("../db/models/Documento");
 const { Caso } = require("../db/models");
-
+const Usuario = require('../db/models/Usuario'); 
 router.use(express.json());
 
 // Configuración de multer para almacenar archivos
@@ -52,6 +52,15 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     const day = today.getDate();
     const fullDay = year + "-" + month + "-" + day;
     const id = fs.readFileSync("src/config/idDoc.txt", "utf8");
+    const usuario = await Usuario.findOne({
+      where: {
+          id: responsable
+      },
+    });
+    const mspId = usuario.dataValues.mspid;
+    const certificatepath = usuario.dataValues.certificatepath;
+    const prvtKeyPath = usuario.dataValues.privatekeypath;
+
     const args = [
       id,
       numCaso,
@@ -64,6 +73,9 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     const transactionResponse = await connection.submitTransaction(
       "blockchain_medicina_forense",
       "agregarDocumento",
+      mspId,
+      certificatepath,
+      prvtKeyPath,
       ...args
     );
 

@@ -1,8 +1,13 @@
 const { getFabricGateway } = require('./fabricConnection.js');
 
-async function submitTransaction(chaincodeName, functionName, ...args) {
+async function submitTransaction(chaincodeName, functionName, MSPID, ca, KEY, ...args) {
     try {
-        const gateway = await getFabricGateway();
+
+        const MSPId = MSPID;
+        const CA = ca;
+        const key = KEY;
+        
+        const gateway = await getFabricGateway(MSPId, CA, key);
         const network = gateway.getNetwork('unbosquechannel');
         const contract = network.getContract(chaincodeName);
 
@@ -20,7 +25,11 @@ async function submitTransaction(chaincodeName, functionName, ...args) {
 
 async function queryTransaction(chaincodeName, functionName, ...args) {
     try {
-        const gateway = await getFabricGateway();
+        const MSPId = args[0];
+        const CA = args[1];
+        const key = args[2];
+        
+        const gateway = await getFabricGateway(MSPId, CA, key);
         const network = gateway.getNetwork('unbosquechannel');
         const contract = network.getContract(chaincodeName);
 

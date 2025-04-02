@@ -5,31 +5,48 @@ const fs = require('node:fs').promises;
 const { TextDecoder } = require('node:util');
 
 const utf8Decoder = new TextDecoder();
-const peerEndpoint = 'localhost:8051';
 
-async function newGrpcConnection() {
-    const tlsRootCert = await fs.readFile("/home/administrador/red-hyperledger-fabric/unbosque-network/crypto-config/peerOrganizations/medleg.unbosque.edu.co/peers/peer0.medleg.unbosque.edu.co/tls/ca.crt");
+async function newGrpcConnection(MSPId) {
+    let typeTLS = ""
+    let typePeer = ""
+    let peerEndpoint = "";
+
+    if (MSPId === "FiscaliaMSP"){
+        typeTLS = "/home/administrador/red-hyperledger-fabric/unbosque-network/crypto-config/peerOrganizations/fiscalia.unbosque.edu.co/peers/peer0.fiscalia.unbosque.edu.co/tls/ca.crt";
+        typePeer = "peer0.fiscalia.unbosque.edu.co";
+        peerEndpoint = 'localhost:9051';
+    }else if (MSPId === "CTIMSP"){
+        typeTLS = "/home/administrador/red-hyperledger-fabric/unbosque-network/crypto-config/peerOrganizations/cti.unbosque.edu.co/peers/peer0.cti.unbosque.edu.co/tls/ca.crt";
+        typePeer = "peer0.cti.unbosque.edu.co";
+        peerEndpoint = 'localhost:7051';
+    }else if (MSPId === "MedLegMSP"){
+        typeTLS = "/home/administrador/red-hyperledger-fabric/unbosque-network/crypto-config/peerOrganizations/medleg.unbosque.edu.co/peers/peer0.medleg.unbosque.edu.co/tls/ca.crt";
+        typePeer = "peer0.medleg.unbosque.edu.co";
+        peerEndpoint = 'localhost:8051';
+    }
+
+    const tlsRootCert = await fs.readFile(typeTLS);
     const tlsCredentials = grpc.credentials.createSsl(tlsRootCert);
     return new grpc.Client(peerEndpoint, tlsCredentials, {
-        'grpc.ssl_target_name_override': 'peer0.medleg.unbosque.edu.co',
+        'grpc.ssl_target_name_override': typePeer,
     });
 }
 
-async function newIdentity() {
-    const credentials = await fs.readFile("/home/administrador/red-hyperledger-fabric/unbosque-network/crypto-config/peerOrganizations/medleg.unbosque.edu.co/users/User1@medleg.unbosque.edu.co/msp/signcerts/User1@medleg.unbosque.edu.co-cert.pem");
-    return { mspId: 'MedLegMSP', credentials };
+async function newIdentity(ca, MSPId) {
+    const credentials = await fs.readFile(ca);
+    return { mspId: MSPId, credentials };
 }
 
-async function newSigner() {
-    const privateKeyPem = await fs.readFile("/home/administrador/red-hyperledger-fabric/unbosque-network/crypto-config/peerOrganizations/medleg.unbosque.edu.co/users/User1@medleg.unbosque.edu.co/msp/keystore/priv_sk");
+async function newSigner(key) {
+    const privateKeyPem = await fs.readFile(key);
     const privateKey = crypto.createPrivateKey(privateKeyPem);
     return signers.newPrivateKeySigner(privateKey);
 }
 
-async function getFabricGateway() {
-    const client = await newGrpcConnection();
-    const identity = await newIdentity();
-    const signer = await newSigner();
+async function getFabricGateway(mspId, ca, key) {
+    const client = await newGrpcConnection(mspId);
+    const identity = await newIdentity(ca, mspId);
+    const signer = await newSigner(key);
 
     return connect({
         client,
