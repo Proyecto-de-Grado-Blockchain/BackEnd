@@ -77,30 +77,7 @@ export const CrearCaso = () => {
             setShowDialogErr(false);
           }, 2000);
         });
-      fetch("http://localhost:3100/historial/crear-historia", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          caso: numeroCaso,
-          des: "Se creó el caso.",
-        }),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Error en la respuesta del servidor");
-          }
-          return response
-            .json()
-            .then((data) => ({ status: response.status, data }));
-        })
-        .then((status, data) => {
-          if (status.status === 200) {
-            setNumeroCaso("")
-            setNombrePaciente("")
-          }
-        });
+      
     }
   };
 

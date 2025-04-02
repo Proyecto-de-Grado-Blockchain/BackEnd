@@ -31,7 +31,6 @@ export const CrearUsuario = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        caso: numeroCaso,
         des: "Se creó el usuario.",
       }),
     })
