@@ -3,6 +3,8 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const { Caso, Usuario } = require("../db/models");
+const fs = require("fs");
+const connection = require("../config/transactionHandler");
 
 router.use(express.json());
 
@@ -141,7 +143,7 @@ router.post("/casos-activos", async (req, res) => {
   }
 });
 
-
+// CONSULTA A BASE DE DATOS POSTGRES
 router.get("/casos-activos", async (req, res) => {
   try {
     const { numCaso } = req.query;
@@ -187,6 +189,16 @@ router.get("/casos-activos", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+
+/*
+route.get("/casos-activos", async (req, res) => {
+  //CONSULTA A RED BLOCKCHAIN
+  const transactionResponse = await connection.submitTransaction(
+    "blockchain_medicina_forense",
+    "crearCaso",
+    ...nuevoCaso
+  );
+})*/
 
 //FILTROS
 router.post("/casos-inactivos", async (req, res) => {
@@ -377,16 +389,29 @@ router.post("/crear-caso", async (req, res) => {
     const fullDay = year + "-" + month + "-" + day;
 
     const { paciente, caso, responsable } = req.body;
+    const id = fs.readFileSync("src/config/idCaso.txt", "utf8");
+    const nuevoCaso = [
+      id,
+      caso,
+      paciente,
+      fullDay,
+      "Activo",
+      responsable
+    ]
 
-    const nuevoCaso = Caso.create({
-      numero_caso: caso,
-      nombre_paciente: paciente,
-      fecha_creacion: fullDay,
-      estado: "Activo",
-      id_usuario: responsable
-    })
-    .then(caso => res.status(200).send(caso))
-    .catch(error => res.status(400).send(error))
+    const transactionResponse = await connection.submitTransaction(
+      "blockchain_medicina_forense",
+      "crearCaso",
+      ...nuevoCaso
+    );
+
+    const idInt = parseInt(id) + 1;
+    fs.writeFileSync("src/config/idCaso.txt", idInt + "", "utf8");
+
+    res.json({
+      message: "Caso creado y transacción completada exitosamente",
+      transactionResponse: transactionResponse,
+    });
   } catch (error) {
     console.error("Error al buscar los casos:", error);
     res.status(500).json({ error: "Error interno del servidor" });

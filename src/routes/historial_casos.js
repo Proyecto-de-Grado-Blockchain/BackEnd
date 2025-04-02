@@ -62,12 +62,12 @@ router.get("/consultar-historia", async (req, res) => {
     });
 
     const historiaCasoFormateado = historiacaso.map((hc) => {
-      // const usuario = Usuario.findOne({
-      //   where: {
-      //       id: parseInt(hc.usuario_responsable)
-      //   },
-      //   attributes: ['nombre_completo'] 
-      // });
+      const usuario = Usuario.findOne({
+        where: {
+            id: parseInt(hc.usuario_responsable)
+        },
+        attributes: ['nombre_completo'] 
+      });
       return {
         fecha: hc.fecha,
         descripcion: hc.descripcion,
