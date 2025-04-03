@@ -14,6 +14,7 @@ export const CasosActivos = () => {
   const [inputValue2, setInputValue2] = useState("");
   const [casos, setCasos] = useState([]);
   const [showReloadButton, setShowReloadButton] = useState(false);
+  const idUsuario = Cookies.get("userId");
 
   const navigate = useNavigate();
 
@@ -84,7 +85,7 @@ export const CasosActivos = () => {
 
   useEffect(() => {
     // Acción que quieres ejecutar cuando se cargue la página
-    fetch("http://localhost:3100/casos/casos-activos", {
+    fetch(`http://localhost:3100/casos/casos-activos?userId=${idUsuario}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json", // Indicamos que estamos enviando JSON
@@ -98,8 +99,7 @@ export const CasosActivos = () => {
         return response.json(); // Devuelve una promesa que se resuelve a JSON
       })
       .then((data) => {
-        console.log(Array.isArray(data));
-        setCasos(data);
+        setCasos(data["transactionResponse"]);
       })
       .catch((error) => {
         console.error("Error en la solicitud:", error);
@@ -198,16 +198,16 @@ export const CasosActivos = () => {
               <tbody>
                 {casos.map((caso, index) => (
                   <tr key={index}>
-                    <td>{caso.numero_caso}</td>
-                    <td>{caso.nombre_paciente}</td>
-                    <td>{caso.fecha_creacion}</td>
+                    <td>{caso.id}</td>
+                    <td>{caso.nombrePaciente}</td>
+                    <td>{caso.fechaCreacion}</td>
                     <td>{caso.estado}</td>
-                    <td>{caso.id_usuario}</td>
+                    <td>{caso.idUsuario}</td>
                     <td>
                       <Link to="/detalle-casos">
                         <button
                           className="VerDetalle"
-                          onClick={() => handleVerDetalle(caso.numero_caso)}
+                          onClick={() => handleVerDetalle(caso.id)}
                         >
                           Ver Detalle
                         </button>

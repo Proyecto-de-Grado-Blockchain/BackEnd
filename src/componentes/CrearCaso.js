@@ -10,6 +10,7 @@ export const CrearCaso = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [showDialogErr, setShowDialogErr] = useState(false);
   const useID = Cookies.get("userId");
+  const dominio = "http://localhost:3100";
 
   const navigate = useNavigate();
   const dialogStyle = {
@@ -43,7 +44,7 @@ export const CrearCaso = () => {
         setShowDialogErr(false); // Desaparece después de 2 segundos
       }, 2000);
     } else {
-      fetch("http://localhost:3100/casos/crear-caso", {
+      fetch(`${dominio}/casos/crear-caso`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -64,6 +65,7 @@ export const CrearCaso = () => {
         })
         .then((status, data) => {
           if (status.status === 200) {
+            
             setShowDialog(true);
             setTimeout(() => {
               setShowDialog(false);

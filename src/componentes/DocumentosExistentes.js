@@ -9,12 +9,13 @@ export const DocumentosExistentes = () => {
   const [caso, setCasos] = useState([]);
   const numeroCaso = Cookies.get("numeroCaso");
   const estado = Cookies.get("estado");
+  const idUsuario = Cookies.get("userId");
   const dominio = "http://localhost:3100";
   const [documentos, setDocs] = useState([]);
 
   useEffect(() => {
     if (estado === "Activo") {
-      fetch(`${dominio}/casos/casos-activos?numCaso=${numeroCaso}`, {
+      fetch(`${dominio}/casos/casos-activos?numCaso=${numeroCaso}&userId=${idUsuario}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -27,7 +28,7 @@ export const DocumentosExistentes = () => {
           return response.json();
         })
         .then((data) => {
-          setCasos(data[0]);
+          setCasos(data["transactionResponse"]);
         })
         .catch((error) => {
           console.error("Error en la solicitud:", error);
@@ -46,13 +47,14 @@ export const DocumentosExistentes = () => {
           return response.json();
         })
         .then((data) => {
-          setCasos(data[0]);
+          setCasos(data["transactionResponse"]);
         })
         .catch((error) => {
           console.error("Error en la solicitud:", error);
         });
     }
-    fetch(`${dominio}/docs/obtenerDocumentos?numCaso=${numeroCaso}`, {
+
+    fetch(`${dominio}/docs/obtenerDocumentos?numCaso=${numeroCaso}&userId=${idUsuario}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -66,6 +68,7 @@ export const DocumentosExistentes = () => {
       })
       .then((data) => {
         setDocs(data["transactionResponse"]);
+        console.log(data["transactionResponse"])
       });
   }, []);
 
@@ -98,9 +101,9 @@ export const DocumentosExistentes = () => {
           </thead>
           <tbody>
             <tr>
-              <td>{caso.numero_caso}</td>
-              <td>{caso.nombre_paciente}</td>
-              <td>{caso.id_usuario}</td>
+              <td>{caso.id}</td>
+              <td>{caso.nombrePaciente}</td>
+              <td>{caso.usuarioResponsable}</td>
             </tr>
           </tbody>
         </table>
@@ -124,16 +127,16 @@ export const DocumentosExistentes = () => {
             <tbody>
               {documentos.length > 0 &&
                 documentos.map((doc, index) => {
-                  if (doc["record"]["tipoDocumento"] === "Informe medico") {
+                  if (doc["tipoDocumento"] === "Informe medico") {
                     return (
                       <tr key={index}>
                         {console.log(doc["record"])}
                         <td>
                           <a
-                            href={`${dominio}/uploads/${doc["record"]["nombreArchivo"]}`}
+                            href={`${dominio}/uploads/${doc["nombreArchivo"]}`}
                             target="_blank"
                           >
-                            {doc["record"]["nombreArchivo"]}
+                            {doc["nombreArchivo"]}
                           </a>
                         </td>
                       </tr>
@@ -156,16 +159,16 @@ export const DocumentosExistentes = () => {
             <tbody>
               {documentos.length > 0 &&
                 documentos.map((doc, index) => {
-                  if (doc["record"]["tipoDocumento"] === "Resultados de laboratorio") {
+                  if (doc["tipoDocumento"] === "Resultados de laboratorio") {
                     return (
                       <tr key={index}>
                         {console.log(doc["record"])}
                         <td>
                           <a
-                            href={`${dominio}/uploads/${doc["record"]["nombreArchivo"]}`}
+                            href={`${dominio}/uploads/${doc["nombreArchivo"]}`}
                             target="_blank"
                           >
-                            {doc["record"]["nombreArchivo"]}
+                            {doc["nombreArchivo"]}
                           </a>
                         </td>
                       </tr>
@@ -188,16 +191,16 @@ export const DocumentosExistentes = () => {
             <tbody>
               {documentos.length > 0 &&
                 documentos.map((doc, index) => {
-                  if (doc["record"]["tipoDocumento"] === "Fotografias forenses") {
+                  if (doc["tipoDocumento"] === "Fotografias forenses") {
                     return (
                       <tr key={index}>
                         {console.log(doc["record"])}
                         <td>
                           <a
-                            href={`${dominio}/uploads/${doc["record"]["nombreArchivo"]}`}
+                            href={`${dominio}/uploads/${doc["nombreArchivo"]}`}
                             target="_blank"
                           >
-                            {doc["record"]["nombreArchivo"]}
+                            {doc["nombreArchivo"]}
                           </a>
                         </td>
                       </tr>

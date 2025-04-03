@@ -71,7 +71,7 @@ export const DetalleCasos = () => {
     document.getElementById("hiddenFileInput3").click();
   };
 
-  const handleSaveNote = async (notas) => {
+  const handleSaveNote = async () => {
     await fetch(`${dominio}/historial/crear-historia`, {
       method: "POST",
       headers: {
@@ -79,8 +79,8 @@ export const DetalleCasos = () => {
       },
       body: JSON.stringify({
         caso: numeroCaso,
-        des: notas,
-        cookie: responsableID,
+        des: note,
+        userId: responsableID,
       }),
     })
       .then((response) => {
@@ -94,19 +94,21 @@ export const DetalleCasos = () => {
       .then((status, data) => {
         if (status.status === 200) {
           window.location.reload();
-          console.log(data);
         }
       });
     setModalOpen(false);
   };
 
   useEffect(() => {
-    fetch(`${dominio}/casos/casos-activos?numCaso=${numeroCaso}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `${dominio}/casos/casos-activos?numCaso=${numeroCaso}&userId=${responsableID}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error en la respuesta del servidor");
@@ -114,19 +116,21 @@ export const DetalleCasos = () => {
         return response.json();
       })
       .then((data) => {
-        setCasos(data[0]);
-        console.log(data[0]);
+        setCasos(data["transactionResponse"]);
       })
       .catch((error) => {
         console.error("Error en la solicitud:", error);
       });
 
-    fetch(`${dominio}/historial/consultar-historia?numCaso=${numeroCaso}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      `${dominio}/historial/consultar-historia?numCaso=${numeroCaso}&userId=${responsableID}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error("Error en la respuesta del servidor");
@@ -134,15 +138,14 @@ export const DetalleCasos = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
-        setHCasos(data);
+        setHCasos(data["transactionResponse"]);
       })
       .catch((err) => {
         console.log("ERROR " + err);
       });
   }, []);
 
-  const cargarArchivo= async (numBoton) => {
+  const cargarArchivo = async (numBoton) => {
     const formData = new FormData();
     if (numBoton === "1") {
       formData.append("file", selectedFile);
@@ -169,11 +172,11 @@ export const DetalleCasos = () => {
             setSelectedFile(null);
             setSelectedFile2(null);
             setSelectedFile3(null);
-            if (numBoton === "1"){
-              handleSaveNote("Se agregó un informe médico al caso."); 
-            }else if (numBoton === "2" ){
+            if (numBoton === "1") {
+              handleSaveNote("Se agregó un informe médico al caso.");
+            } else if (numBoton === "2") {
               handleSaveNote("Se agregaron resultados de laboratorio al caso.");
-            }else if (numBoton === "3" ){
+            } else if (numBoton === "3") {
               handleSaveNote("Se agregaron fotografías al caso.");
             }
           }, 2000);
@@ -187,7 +190,7 @@ export const DetalleCasos = () => {
     } catch (error) {
       console.error("Error al subir el archivo:", error);
     }
-  }
+  };
 
   const handleVerDetalle = (estado) => {
     Cookies.set("estado", estado, { expires: 1 }); // Expira en 1 día
@@ -244,9 +247,9 @@ export const DetalleCasos = () => {
                   </th>
                 </tr>
                 <tr>
-                  <td style={{ padding: "5px" }}>{caso.numero_caso}</td>
-                  <td style={{ padding: "5px" }}>{caso.nombre_paciente}</td>
-                  <td style={{ padding: "5px" }}>{caso.fecha_creacion}</td>
+                  <td style={{ padding: "5px" }}>{caso.id}</td>
+                  <td style={{ padding: "5px" }}>{caso.nombrePaciente}</td>
+                  <td style={{ padding: "5px" }}>{caso.fechaCreacion}</td>
                 </tr>
                 <tr>
                   <th
@@ -265,7 +268,7 @@ export const DetalleCasos = () => {
                 </tr>
                 <tr>
                   <td style={{ padding: "5px" }}>{caso.estado}</td>
-                  <td style={{ padding: "5px" }}>{caso.id_usuario}</td>
+                  <td style={{ padding: "5px" }}>{caso.idUsuario}</td>
                 </tr>
               </tbody>
             </table>
@@ -315,7 +318,7 @@ export const DetalleCasos = () => {
               <button
                 className="boton-upload"
                 onClick={() => {
-                  cargarArchivo("2")
+                  cargarArchivo("2");
                   setNote("Se agregaron resultados de laboratorio al caso.");
                 }}
               >
@@ -338,9 +341,7 @@ export const DetalleCasos = () => {
               <button
                 className="boton-upload"
                 onClick={() => {
-                  
-                  cargarArchivo("3")
-                  console.log(note)
+                  cargarArchivo("3");
                 }}
               >
                 <img src={upload} alt="Upload" />
@@ -356,7 +357,7 @@ export const DetalleCasos = () => {
                 Ver documentos existentes
               </button>
               <Link to="/gestion-caso">
-                            <img src={tuerca} className="img-tuerca" alt="Logo" />
+                <img src={tuerca} className="img-tuerca" alt="Logo" />
               </Link>
             </div>
           </div>
@@ -394,9 +395,9 @@ export const DetalleCasos = () => {
             <tbody>
               {hCaso.map((caso, index) => (
                 <tr key={index}>
-                  <td>{caso.fecha.split("T")[0]}</td>
+                  <td>{caso.fecha}</td>
                   <td>{caso.descripcion}</td>
-                  <td>{caso.usuario_responsable}</td>
+                  <td>{caso.usuarioResponsable}</td>
                   <td>
                     <button
                       onClick={() => setModalOpen(true)}
@@ -422,27 +423,29 @@ export const DetalleCasos = () => {
 
         {/* Ventana emergente para agregar notas */}
         {isModalOpen && (
-          <div className="modal">
-            <div className="modal-content">
-              <button
-                className="close-button"
-                onClick={() => setModalOpen(false)}
-              >
-                ✖
-              </button>
-              <h4>Añadir Nota</h4>
-              <input
-                type="text"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Escribe tu nota aquí..."
-                required
-              />
-              <button type="button" onClick={handleSaveNote(note)}>
-                Guardar
-              </button>
+          <form onSubmit={handleSaveNote}>
+            <div className="modal">
+              <div className="modal-content">
+                <button
+                  className="close-button"
+                  onClick={() => setModalOpen(false)}
+                >
+                  ✖
+                </button>
+                <h4>Añadir Nota</h4>
+                <input
+                  type="text"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="Escribe tu nota aquí..."
+                  required
+                />
+                <button type="submit">
+                  Guardar
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
         )}
       </div>
       <br />
