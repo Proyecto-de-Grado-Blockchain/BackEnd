@@ -23,11 +23,11 @@ async function submitTransaction(chaincodeName, functionName, MSPID, ca, KEY, ..
     }
 }
 
-async function queryTransaction(chaincodeName, functionName, ...args) {
+async function queryTransaction(chaincodeName, functionName,  MSPID, ca, KEY, ...args) {
     try {
-        const MSPId = args[0];
-        const CA = args[1];
-        const key = args[2];
+        const MSPId = MSPID;
+        const CA = ca;
+        const key = KEY;
         
         const gateway = await getFabricGateway(MSPId, CA, key);
         const network = gateway.getNetwork('unbosquechannel');

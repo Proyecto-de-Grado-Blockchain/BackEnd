@@ -51,7 +51,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     const month = today.getMonth();
     const day = today.getDate();
     const fullDay = year + "-" + month + "-" + day;
-    const id = fs.readFileSync("src/config/idDoc.txt", "utf8");
+    const id = fs.readFileSync("src/config/ids.txt", "utf8");
     const usuario = await Usuario.findOne({
       where: {
           id: responsable
@@ -79,19 +79,15 @@ router.post("/upload", upload.single("file"), async (req, res) => {
       ...args
     );
 
-    const getCaso = Caso.findOne({
-      where: {
-        numero_caso: numCaso,
-      },
-    });
     const idInt = parseInt(id) + 1;
-    fs.writeFileSync("src/config/idDoc.txt", idInt + "", "utf8");
+    fs.writeFileSync("src/config/ids.txt", idInt + "", "utf8");
     // Enviar la respuesta una vez que la transacción esté completa
     res.json({
       message: "Archivo subido y transacción completada exitosamente",
       file: req.file,
       transactionResponse: transactionResponse,
     });
+
   } catch (error) {
     console.error("Error al subir el archivo:", error);
     res.status(500).json({ message: "Error al subir el archivo" });
@@ -138,12 +134,24 @@ async function hashImage(filePath) {
 
 router.get("/obtenerDocumentos", async (req, res) => {
   try {
-    const { numCaso } = req.query;
+    const { numCaso, userId } = req.query;
+
+    const usuario = await Usuario.findOne({
+      where: {
+          id: userId
+      },
+    });
+    const mspId = usuario.dataValues.mspid;
+    const certificatepath = usuario.dataValues.certificatepath;
+    const prvtKeyPath = usuario.dataValues.privatekeypath;
 
     // Llamar a la función de transacción en la blockchain
     const transactionResponse = await connection.queryTransaction(
       "blockchain_medicina_forense",
       "consultarDocumentosCaso",
+      mspId,
+      certificatepath,
+      prvtKeyPath,
       numCaso
     );
 
@@ -151,6 +159,7 @@ router.get("/obtenerDocumentos", async (req, res) => {
     const jsonTextResponse = JSON.parse(textResponse);
     console.log(jsonTextResponse)
 
+    //Carga el doc a la carpeta uploads
     fs.readdir("/home/administrador/BackEnd/src/uploads", (err, files) => {
       if (err) {
         console.error("Error al leer la carpeta de uploads:", err);

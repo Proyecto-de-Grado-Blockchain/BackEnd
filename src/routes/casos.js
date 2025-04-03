@@ -143,7 +143,7 @@ router.post("/casos-activos", async (req, res) => {
   }
 });
 
-// CONSULTA A BASE DE DATOS POSTGRES
+/* CONSULTA A BASE DE DATOS POSTGRES
 router.get("/casos-activos", async (req, res) => {
   try {
     const { numCaso } = req.query;
@@ -188,17 +188,60 @@ router.get("/casos-activos", async (req, res) => {
     console.error("Error al buscar los casos:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
-});
+});*/
 
-/*
-route.get("/casos-activos", async (req, res) => {
-  //CONSULTA A RED BLOCKCHAIN
-  const transactionResponse = await connection.submitTransaction(
-    "blockchain_medicina_forense",
-    "crearCaso",
-    ...nuevoCaso
-  );
-})*/
+router.get("/casos-activos", async (req, res) => {
+  const { userId, numCaso } = req.query;
+  //Obtiene información de un usuario en la base de datos postgres
+  const usuario = await Usuario.findOne({
+    where: {
+      id: userId,
+    },
+  });
+
+  const mspId = usuario.dataValues.mspid;
+  const certificatepath = usuario.dataValues.certificatepath;
+  const prvtKeyPath = usuario.dataValues.privatekeypath;
+
+  let transactionResponse = "";
+
+  if (!numCaso) {
+    const args = ["Activo"];
+
+    //CONSULTA A RED BLOCKCHAIN
+    transactionResponse = await connection.queryTransaction(
+      "blockchain_medicina_forense",
+      "consultarCasosPorEstado",
+      mspId,
+      certificatepath,
+      prvtKeyPath,
+      ...args
+    );
+  } else {
+    const args = [numCaso];
+
+    //CONSULTA A RED BLOCKCHAIN
+    transactionResponse = await connection.queryTransaction(
+      "blockchain_medicina_forense",
+      "consultarCaso",
+      mspId,
+      certificatepath,
+      prvtKeyPath,
+      ...args
+    );
+  }
+
+  //Trasnforma la respuesta del chaincode a string y a JSON
+  const responseString = Buffer.from(transactionResponse).toString("utf8");
+  const jsonData = JSON.parse(responseString);
+
+  console.log(jsonData);
+
+  res.json({
+    message: "Casos obtenidos exitosamente",
+    transactionResponse: jsonData,
+  });
+});
 
 //FILTROS
 router.post("/casos-inactivos", async (req, res) => {
@@ -339,7 +382,7 @@ router.get("/casos-inactivos", async (req, res) => {
   try {
     const { numCaso } = req.query;
     let caso = "";
-    if (!numCaso){
+    if (!numCaso) {
       caso = await Caso.findAll({
         where: {
           estado: "Inactivo",
@@ -351,7 +394,7 @@ router.get("/casos-inactivos", async (req, res) => {
           },
         ],
       });
-    }else{
+    } else {
       caso = await Caso.findAll({
         where: {
           numero_caso: numCaso,
@@ -389,24 +432,30 @@ router.post("/crear-caso", async (req, res) => {
     const fullDay = year + "-" + month + "-" + day;
 
     const { paciente, caso, responsable } = req.body;
-    const id = fs.readFileSync("src/config/idCaso.txt", "utf8");
-    const nuevoCaso = [
-      id,
-      caso,
-      paciente,
-      fullDay,
-      "Activo",
-      responsable
-    ]
+    const id = fs.readFileSync("src/config/ids.txt", "utf8");
+    const nuevoCaso = [id, caso, paciente, fullDay, "Activo", responsable];
+
+    const usuario = await Usuario.findOne({
+      where: {
+        id: responsable,
+      },
+    });
+
+    const mspId = usuario.dataValues.mspid;
+    const certificatepath = usuario.dataValues.certificatepath;
+    const prvtKeyPath = usuario.dataValues.privatekeypath;
 
     const transactionResponse = await connection.submitTransaction(
       "blockchain_medicina_forense",
       "crearCaso",
+      mspId,
+      certificatepath,
+      prvtKeyPath,
       ...nuevoCaso
     );
 
     const idInt = parseInt(id) + 1;
-    fs.writeFileSync("src/config/idCaso.txt", idInt + "", "utf8");
+    fs.writeFileSync("src/config/ids.txt", idInt + "", "utf8");
 
     res.json({
       message: "Caso creado y transacción completada exitosamente",
