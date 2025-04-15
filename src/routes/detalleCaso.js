@@ -56,6 +56,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
       where: {
           id: responsable
       },
+      attributes: ['certificatepath', 'mspid', 'privatekeypath']
     });
     const mspId = usuario.dataValues.mspid;
     const certificatepath = usuario.dataValues.certificatepath;
@@ -140,6 +141,7 @@ router.get("/obtenerDocumentos", async (req, res) => {
       where: {
           id: userId
       },
+      attributes: ['certificatepath', 'mspid', 'privatekeypath']
     });
     const mspId = usuario.dataValues.mspid;
     const certificatepath = usuario.dataValues.certificatepath;

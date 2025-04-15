@@ -197,6 +197,7 @@ router.get("/casos-activos", async (req, res) => {
     where: {
       id: userId,
     },
+    attributes: ['certificatepath', 'mspid', 'privatekeypath']
   });
 
   const mspId = usuario.dataValues.mspid;
@@ -377,7 +378,7 @@ router.post("/casos-inactivos", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
+/* CONSULTA POR BASE DE DATOS
 router.get("/casos-inactivos", async (req, res) => {
   try {
     const { numCaso } = req.query;
@@ -422,6 +423,61 @@ router.get("/casos-inactivos", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
+*/
+
+router.get("/casos-inactivos", async (req, res) => {
+  const { userId, numCaso } = req.query;
+  //Obtiene información de un usuario en la base de datos postgres
+  const usuario = await Usuario.findOne({
+    where: {
+      id: userId,
+    },
+    attributes: ['certificatepath', 'mspid', 'privatekeypath']
+  });
+
+  const mspId = usuario.dataValues.mspid;
+  const certificatepath = usuario.dataValues.certificatepath;
+  const prvtKeyPath = usuario.dataValues.privatekeypath;
+
+  let transactionResponse = "";
+
+  if (!numCaso) {
+    const args = ["Cerrado"];
+
+    //CONSULTA A RED BLOCKCHAIN
+    transactionResponse = await connection.queryTransaction(
+      "blockchain_medicina_forense",
+      "consultarCasosPorEstado",
+      mspId,
+      certificatepath,
+      prvtKeyPath,
+      ...args
+    );
+  } else {
+    const args = [numCaso];
+
+    //CONSULTA A RED BLOCKCHAIN
+    transactionResponse = await connection.queryTransaction(
+      "blockchain_medicina_forense",
+      "consultarCaso",
+      mspId,
+      certificatepath,
+      prvtKeyPath,
+      ...args
+    );
+  }
+
+  //Trasnforma la respuesta del chaincode a string y a JSON
+  const responseString = Buffer.from(transactionResponse).toString("utf8");
+  const jsonData = JSON.parse(responseString);
+
+  console.log(jsonData);
+
+  res.json({
+    message: "Casos obtenidos exitosamente",
+    transactionResponse: jsonData,
+  });
+});
 
 router.post("/crear-caso", async (req, res) => {
   try {
@@ -439,6 +495,7 @@ router.post("/crear-caso", async (req, res) => {
       where: {
         id: responsable,
       },
+      attributes: ['certificatepath', 'mspid', 'privatekeypath']
     });
 
     const mspId = usuario.dataValues.mspid;
@@ -460,6 +517,44 @@ router.post("/crear-caso", async (req, res) => {
     res.json({
       message: "Caso creado y transacción completada exitosamente",
       transactionResponse: transactionResponse,
+    });
+  } catch (error) {
+    console.error("Error al buscar los casos:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+router.post("/cerrar-caso", async (req, res) => {
+  try {
+    const { caso, des, responsable} = req.body;
+    console.log(caso)
+
+    const nuevoCaso = [caso, "estado", "Cerrado"];
+
+    const usuario = await Usuario.findOne({
+      where: {
+        id: responsable,
+      },
+    });
+
+    const mspId = usuario.dataValues.mspid;
+    const certificatepath = usuario.dataValues.certificatepath;
+    const prvtKeyPath = usuario.dataValues.privatekeypath;
+
+    const transactionResponse = await connection.submitTransaction(
+      "blockchain_medicina_forense",
+      "actualizarCaso",
+      mspId,
+      certificatepath,
+      prvtKeyPath,
+      ...nuevoCaso
+    );
+    const responseString = Buffer.from(transactionResponse).toString("utf8");
+    const jsonData = JSON.parse(responseString);
+
+    res.json({
+      message: "Caso cerrado y transacción completada exitosamente",
+      transactionResponse: jsonData,
     });
   } catch (error) {
     console.error("Error al buscar los casos:", error);

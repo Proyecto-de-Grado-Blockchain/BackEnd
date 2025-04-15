@@ -16,12 +16,13 @@ router.post("/crear-historia", async (req, res) => {
     const day = today.getDate();
     const fullDay = year + "-" + month + "-" + day;
 
-    const userR = userId;
+    const userR = req.body.userId;
 
     const usuario = await Usuario.findOne({
       where: {
         id: userR,
       },
+      attributes: ['certificatepath', 'mspid', 'privatekeypath']
     });
 
     const mspId = usuario.dataValues.mspid;
@@ -30,7 +31,7 @@ router.post("/crear-historia", async (req, res) => {
 
     const id = fs.readFileSync("src/config/ids.txt", "utf8");
 
-    const nuevoHistorial = [id, caso, fullDay, des, "", userR];
+    const nuevoHistorial = [id, req.body.caso, fullDay, req.body.des, "", userR];
 
     const transactionResponse = await connection.submitTransaction(
       "blockchain_medicina_forense",
@@ -44,7 +45,6 @@ router.post("/crear-historia", async (req, res) => {
     //Trasnforma la respuesta del chaincode a string y a JSON
     const responseString = Buffer.from(transactionResponse).toString("utf8");
     const jsonData = JSON.parse(responseString);
-    console.log(jsonData);
     const idInt = parseInt(id) + 1;
     fs.writeFileSync("src/config/ids.txt", idInt + "", "utf8");
 
@@ -66,6 +66,7 @@ router.get("/consultar-historia", async (req, res) => {
       where: {
         id: userId,
       },
+      attributes: ['certificatepath', 'mspid', 'privatekeypath']
     });
 
     const mspId = usuario.dataValues.mspid;
@@ -86,7 +87,6 @@ router.get("/consultar-historia", async (req, res) => {
     //Trasnforma la respuesta del chaincode a string y a JSON
     const responseString = Buffer.from(transactionResponse).toString("utf8");
     const jsonData = JSON.parse(responseString);
-    console.log(jsonData)
     res.json({
       message: "Historial consultada y transacción completada exitosamente",
       transactionResponse: jsonData,
