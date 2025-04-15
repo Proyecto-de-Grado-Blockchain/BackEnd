@@ -9,7 +9,7 @@ import Cookies from "js-cookie";
 
 export const DetalleCasos = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState(" ");
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedFile2, setSelectedFile2] = useState(null);
   const [selectedFile3, setSelectedFile3] = useState(null);
@@ -164,21 +164,15 @@ export const DetalleCasos = () => {
         method: "POST",
         body: formData,
       });
-      await response.json().then((data) => {
+      response.json().then((data) => {
         if (data.transactionResponse) {
           setShowDialog(true); // Muestra el diálogo
+          handleSaveNote();
           setTimeout(() => {
             setShowDialog(false);
             setSelectedFile(null);
             setSelectedFile2(null);
             setSelectedFile3(null);
-            if (numBoton === "1") {
-              handleSaveNote("Se agregó un informe médico al caso.");
-            } else if (numBoton === "2") {
-              handleSaveNote("Se agregaron resultados de laboratorio al caso.");
-            } else if (numBoton === "3") {
-              handleSaveNote("Se agregaron fotografías al caso.");
-            }
           }, 2000);
         } else if (data.message === "Error al subir el archivo") {
           setShowDialogErr(true); // Muestra el diálogo
@@ -291,9 +285,12 @@ export const DetalleCasos = () => {
               </button>
               <button
                 className="boton-upload"
+                onMouseOver={() => {
+                  setNote("Se agregó un informe médico al caso.");
+                  console.log(note);
+                }}
                 onClick={() => {
                   cargarArchivo("1");
-                  setNote("Se agregó un informe médico al caso.");
                 }}
               >
                 <img src={upload} alt="Upload" />
@@ -317,9 +314,12 @@ export const DetalleCasos = () => {
               </button>
               <button
                 className="boton-upload"
+                onMouseOver={() => {
+                  setNote("Se agregaron resultados de laboratorio al caso.");
+                  console.log(note);
+                }}
                 onClick={() => {
                   cargarArchivo("2");
-                  setNote("Se agregaron resultados de laboratorio al caso.");
                 }}
               >
                 <img src={upload} alt="Upload" />
@@ -340,6 +340,10 @@ export const DetalleCasos = () => {
               </button>
               <button
                 className="boton-upload"
+                onMouseOverCapture={() => {
+                  setNote("Se agregaron fotografías al caso.");
+                  console.log(note);
+                }}
                 onClick={() => {
                   cargarArchivo("3");
                 }}
@@ -440,9 +444,7 @@ export const DetalleCasos = () => {
                   placeholder="Escribe tu nota aquí..."
                   required
                 />
-                <button type="submit">
-                  Guardar
-                </button>
+                <button type="submit">Guardar</button>
               </div>
             </div>
           </form>

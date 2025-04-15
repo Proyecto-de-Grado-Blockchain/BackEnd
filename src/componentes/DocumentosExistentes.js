@@ -34,7 +34,7 @@ export const DocumentosExistentes = () => {
           console.error("Error en la solicitud:", error);
         });
     } else {
-      fetch(`${dominio}/casos/casos-inactivos?numCaso=${numeroCaso}`, {
+      fetch(`${dominio}/casos/casos-inactivos?numCaso=${numeroCaso}&userId=${idUsuario}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -68,7 +68,6 @@ export const DocumentosExistentes = () => {
       })
       .then((data) => {
         setDocs(data["transactionResponse"]);
-        console.log(data["transactionResponse"])
       });
   }, []);
 
@@ -130,7 +129,6 @@ export const DocumentosExistentes = () => {
                   if (doc["tipoDocumento"] === "Informe medico") {
                     return (
                       <tr key={index}>
-                        {console.log(doc["record"])}
                         <td>
                           <a
                             href={`${dominio}/uploads/${doc["nombreArchivo"]}`}
@@ -162,7 +160,6 @@ export const DocumentosExistentes = () => {
                   if (doc["tipoDocumento"] === "Resultados de laboratorio") {
                     return (
                       <tr key={index}>
-                        {console.log(doc["record"])}
                         <td>
                           <a
                             href={`${dominio}/uploads/${doc["nombreArchivo"]}`}
@@ -194,7 +191,6 @@ export const DocumentosExistentes = () => {
                   if (doc["tipoDocumento"] === "Fotografias forenses") {
                     return (
                       <tr key={index}>
-                        {console.log(doc["record"])}
                         <td>
                           <a
                             href={`${dominio}/uploads/${doc["nombreArchivo"]}`}

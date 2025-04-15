@@ -14,8 +14,9 @@ export const CasosCerrados = () => {
   const [inputValue2, setInputValue2] = useState("");
   const [casos, setCasos] = useState([]);
   const [showReloadButton, setShowReloadButton] = useState(false);
-
+  const dominio = "http://localhost:3100";
   const navigate = useNavigate();
+  const idUsuario = Cookies.get("userId");
 
   const toggleMenu = (menu) => {
     if (menu === 2) {
@@ -86,7 +87,7 @@ export const CasosCerrados = () => {
 
   useEffect(() => {
     // Acción que quieres ejecutar cuando se cargue la página
-    fetch("http://localhost:3100/casos/casos-inactivos", {
+    fetch(`${dominio}/casos/casos-inactivos?userId=${idUsuario}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json", // Indicamos que estamos enviando JSON
@@ -100,8 +101,8 @@ export const CasosCerrados = () => {
         return response.json(); // Devuelve una promesa que se resuelve a JSON
       })
       .then((data) => {
-        console.log(Array.isArray(data));
-        setCasos(data);
+        console.log(data.transactionResponse);
+        setCasos(data.transactionResponse);
       })
       .catch((error) => {
         console.error("Error en la solicitud:", error);
@@ -205,16 +206,16 @@ export const CasosCerrados = () => {
               <tbody>
                 {casos.map((caso, index) => (
                   <tr key={index}>
-                    <td>{caso.numero_caso}</td>
-                    <td>{caso.nombre_paciente}</td>
-                    <td>{caso.fecha_creacion}</td>
+                    <td>{caso.id}</td>
+                    <td>{caso.nombrePaciente}</td>
+                    <td>{caso.fechaCreacion}</td>
                     <td>{caso.estado}</td>
-                    <td>{caso.id_usuario}</td>
+                    <td>{caso.idUsuario}</td>
                     <td>
                       <Link to="/detalle-casosCerrados">
                         <button
                           className="VerDetalle"
-                          onClick={() => handleVerDetalle(caso.numero_caso)}
+                          onClick={() => handleVerDetalle(caso.id)}
                         >
                           Ver Detalle
                         </button>

@@ -14,6 +14,7 @@ export const DetalleCasosCerrados = () => {
   const numeroCaso = Cookies.get("numeroCaso");
   const responsableID = Cookies.get("userId");
   const [hCaso, setHCasos] = useState([]);
+  const dominio = "http://localhost:3100";
 
   const handleUploadClick = () => {
     //navigate("/ruta-a-otro-lado"); // Cambia esto a la ruta deseada
@@ -28,7 +29,7 @@ export const DetalleCasosCerrados = () => {
   };
 
   useEffect(() => {
-    fetch(`http://localhost:3100/casos/casos-inactivos?numCaso=${numeroCaso}`, {
+    fetch(`${dominio}/casos/casos-inactivos?numCaso=${numeroCaso}&userId=${responsableID}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -41,15 +42,14 @@ export const DetalleCasosCerrados = () => {
         return response.json();
       })
       .then((data) => {
-        setCasos(data[0]);
-        console.log(data[0]);
+        setCasos(data.transactionResponse);
       })
       .catch((error) => {
         console.error("Error en la solicitud:", error);
       });
 
     fetch(
-      `http://localhost:3100/historial/consultar-historia?numCaso=${numeroCaso}`,
+      `${dominio}/historial/consultar-historia?numCaso=${numeroCaso}&userId=${responsableID}`,
       {
         method: "GET",
         headers: {
@@ -64,8 +64,7 @@ export const DetalleCasosCerrados = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
-        setHCasos(data);
+        setHCasos(data.transactionResponse);
       })
       .catch((err) => {
         console.log("ERROR " + err);
@@ -127,9 +126,9 @@ export const DetalleCasosCerrados = () => {
                   </th>
                 </tr>
                 <tr>
-                  <td style={{ padding: "5px" }}>{caso.numero_caso}</td>
-                  <td style={{ padding: "5px" }}>{caso.nombre_paciente}</td>
-                  <td style={{ padding: "5px" }}>{caso.fecha_creacion}</td>
+                  <td style={{ padding: "5px" }}>{caso.id}</td>
+                  <td style={{ padding: "5px" }}>{caso.nombrePaciente}</td>
+                  <td style={{ padding: "5px" }}>{caso.fechaCreacion}</td>
                 </tr>
                 <tr>
                   <th
@@ -148,7 +147,7 @@ export const DetalleCasosCerrados = () => {
                 </tr>
                 <tr>
                   <td style={{ padding: "5px" }}>{caso.estado}</td>
-                  <td style={{ padding: "5px" }}>{caso.id_usuario}</td>
+                  <td style={{ padding: "5px" }}>{caso.idUsuario}</td>
                 </tr>
               </tbody>
             </table>
@@ -192,7 +191,7 @@ export const DetalleCasosCerrados = () => {
                 <tr key={index}>
                   <td>{caso.fecha.split("T")[0]}</td>
                   <td>{caso.descripcion}</td>
-                  <td>{caso.usuario_responsable}</td>
+                  <td>{caso.usuarioResponsable}</td>
                 </tr>
               ))}
             </tbody>
