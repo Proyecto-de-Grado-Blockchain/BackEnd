@@ -439,6 +439,8 @@ router.get("/casos-inactivos", async (req, res) => {
   const certificatepath = usuario.dataValues.certificatepath;
   const prvtKeyPath = usuario.dataValues.privatekeypath;
 
+  console.log(usuario.dataValues);
+
   let transactionResponse = "";
 
   if (!numCaso) {
@@ -489,7 +491,7 @@ router.post("/crear-caso", async (req, res) => {
 
     const { paciente, caso, responsable } = req.body;
     const id = fs.readFileSync("src/config/ids.txt", "utf8");
-    const nuevoCaso = [id, caso, paciente, fullDay, "Activo", responsable];
+    const nuevoCaso = [id, paciente, fullDay, "Activo", responsable];
 
     const usuario = await Usuario.findOne({
       where: {
