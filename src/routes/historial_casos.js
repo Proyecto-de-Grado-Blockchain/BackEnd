@@ -82,7 +82,7 @@ router.get("/consultar-historia", async (req, res) => {
 
     const nuevoHistorial = [numCaso];
 
-    const transactionResponse = await connection.submitTransaction(
+    const transactionResponse = await connection.queryTransaction(
       "blockchain_medicina_forense",
       "consultarHistorialCaso",
       mspId,
