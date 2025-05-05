@@ -9,186 +9,71 @@ const connection = require("../config/transactionHandler");
 router.use(express.json());
 
 //FILTROS
+
 router.post("/casos-activos", async (req, res) => {
   try {
-    const { seleccion2, entrada2 } = req.body; // Obtenemos los datos del cuerpo de la solicitud
+    const { seleccion2, entrada2, userId } = req.body;
+    //Obtiene información de un usuario en la base de datos postgres
+    const usuario = await Usuario.findOne({
+      where: {
+        id: userId,
+      },
+      attributes: ["certificatepath", "mspid", "privatekeypath"],
+    });
 
-    // Buscamos los casos
-    if (seleccion2 === "Número de caso") {
-      const caso = await Caso.findAll({
-        where: {
-          numero_caso: entrada2,
-          estado: "Activo",
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-      const casosFormateados = caso.map((c) => {
-        return {
-          nombre_paciente: c.nombre_paciente,
-          id_usuario: c.Usuario.nombre_completo,
-          fecha_creacion: c.fecha_creacion,
-          estado: c.estado,
-          numero_caso: c.numero_caso,
-        };
-      });
-      res.json(casosFormateados);
-    } else if (seleccion2 === "Nombre") {
-      const caso = await Caso.findAll({
-        where: {
-          nombre_paciente: entrada2,
-          estado: "Activo",
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-      const casosFormateados = caso.map((c) => {
-        return {
-          nombre_paciente: c.nombre_paciente,
-          id_usuario: c.Usuario.nombre_completo,
-          fecha_creacion: c.fecha_creacion,
-          estado: c.estado,
-          numero_caso: c.numero_caso,
-        };
-      });
-      res.json(casosFormateados);
-    } else if (seleccion2 === "Estado") {
-      const caso = await Caso.findAll({
-        where: {
-          estado: entrada2,
-          estado: "Activo",
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-      const casosFormateados = caso.map((c) => {
-        return {
-          nombre_paciente: c.nombre_paciente,
-          id_usuario: c.Usuario.nombre_completo,
-          fecha_creacion: c.fecha_creacion,
-          estado: c.estado,
-          numero_caso: c.numero_caso,
-        };
-      });
-      res.json(casosFormateados);
-    } else if (seleccion2 === "Fecha") {
-      const caso = await Caso.findAll({
-        where: {
-          fecha_creacion: entrada2,
-          estado: "Activo",
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-      const casosFormateados = caso.map((c) => {
-        return {
-          nombre_paciente: c.nombre_paciente,
-          id_usuario: c.Usuario.nombre_completo,
-          fecha_creacion: c.fecha_creacion,
-          estado: c.estado,
-          numero_caso: c.numero_caso,
-        };
-      });
-      res.json(casosFormateados);
-    } else if (seleccion2 === "Médico Forense") {
-      const usuario = await Usuario.findOne({
-        attributes: ["id"],
-        where: {
-          nombre_completo: entrada2,
-        },
+    const mspId = usuario.dataValues.mspid;
+    const certificatepath = usuario.dataValues.certificatepath;
+    const prvtKeyPath = usuario.dataValues.privatekeypath;
+
+    let transactionResponse = "";
+    const args = [seleccion2, entrada2, "Activo"];
+
+    //CONSULTA A RED BLOCKCHAIN
+    transactionResponse = await connection.queryTransaction(
+      "blockchain_medicina_forense",
+      "consultarCasosPorFiltro",
+      mspId,
+      certificatepath,
+      prvtKeyPath,
+      ...args
+    );
+
+    const responseString = Buffer.from(transactionResponse).toString("utf8");
+    const jsonData = JSON.parse(responseString);
+    console.log(seleccion2 + " " + entrada2);
+
+    const ids = jsonData
+      .map((item) => item.idUsuario)
+      .filter((idUsuario) => idUsuario !== undefined);
+
+    for (const id of ids) {
+      // Obtenemos el nombre completo del usuario
+      const nom_res = await Usuario.findOne({
+        where: { id: id },
+        attributes: ["nombre_completo"],
       });
 
-      const caso = await Caso.findAll({
-        where: {
-          id_usuario: usuario.id,
-          estado: "Activo",
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
+      // Actualizamos el JSON original con el nombre completo
+      jsonData.forEach((item) => {
+        if (item.idUsuario === id) {
+          item.idUsuario = nom_res
+            ? nom_res.nombre_completo
+            : "Usuario no encontrado";
+        }
       });
-      const casosFormateados = caso.map((c) => {
-        return {
-          nombre_paciente: c.nombre_paciente,
-          id_usuario: c.Usuario.nombre_completo,
-          fecha_creacion: c.fecha_creacion,
-          estado: c.estado,
-          numero_caso: c.numero_caso,
-        };
-      });
-      res.json(casosFormateados);
     }
+
+    console.log(jsonData)
+
+    res.json({
+      message: "Casos obtenidos exitosamente",
+      transactionResponse: jsonData,
+    });
   } catch (error) {
     console.error("Error al buscar los casos:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-
-/* CONSULTA A BASE DE DATOS POSTGRES
-router.get("/casos-activos", async (req, res) => {
-  try {
-    const { numCaso } = req.query;
-    let caso = "";
-    if (!numCaso){
-      caso = await Caso.findAll({
-        where: {
-          estado: "Activo",
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-    }else{
-      caso = await Caso.findAll({
-        where: {
-          numero_caso: numCaso,
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-    }
-    
-    const casosFormateados = caso.map((c) => {
-      return {
-        nombre_paciente: c.nombre_paciente,
-        id_usuario: c.Usuario.nombre_completo,
-        fecha_creacion: c.fecha_creacion,
-        estado: c.estado,
-        numero_caso: c.numero_caso,
-      };
-    });
-    res.json(casosFormateados);
-  } catch (error) {
-    console.error("Error al buscar los casos:", error);
-    res.status(500).json({ error: "Error interno del servidor" });
-  }
-});*/
 
 router.get("/casos-activos", async (req, res) => {
   const { userId, numCaso } = req.query;
@@ -197,7 +82,7 @@ router.get("/casos-activos", async (req, res) => {
     where: {
       id: userId,
     },
-    attributes: ['certificatepath', 'mspid', 'privatekeypath']
+    attributes: ["certificatepath", "mspid", "privatekeypath"],
   });
 
   const mspId = usuario.dataValues.mspid;
@@ -236,7 +121,26 @@ router.get("/casos-activos", async (req, res) => {
   const responseString = Buffer.from(transactionResponse).toString("utf8");
   const jsonData = JSON.parse(responseString);
 
-  console.log(jsonData);
+  const ids = jsonData
+    .map((item) => item.idUsuario)
+    .filter((idUsuario) => idUsuario !== undefined);
+
+  for (const id of ids) {
+    // Obtenemos el nombre completo del usuario
+    const nom_res = await Usuario.findOne({
+      where: { id: id },
+      attributes: ["nombre_completo"],
+    });
+
+    // Actualizamos el JSON original con el nombre completo
+    jsonData.forEach((item) => {
+      if (item.idUsuario === id) {
+        item.idUsuario = nom_res
+          ? nom_res.nombre_completo
+          : "Usuario no encontrado";
+      }
+    });
+  }
 
   res.json({
     message: "Casos obtenidos exitosamente",
@@ -247,183 +151,69 @@ router.get("/casos-activos", async (req, res) => {
 //FILTROS
 router.post("/casos-inactivos", async (req, res) => {
   try {
-    const { seleccion2, entrada2 } = req.body; // Obtenemos los datos del cuerpo de la solicitud
-
-    // Buscamos los casos
-    if (seleccion2 === "Número de caso") {
-      const caso = await Caso.findAll({
-        where: {
-          numero_caso: entrada2,
-          estado: "Inactivo",
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-      const casosFormateados = caso.map((c) => {
-        return {
-          nombre_paciente: c.nombre_paciente,
-          id_usuario: c.Usuario.nombre_completo,
-          fecha_creacion: c.fecha_creacion,
-          estado: c.estado,
-          numero_caso: c.numero_caso,
-        };
-      });
-      res.json(casosFormateados);
-    } else if (seleccion2 === "Nombre") {
-      const caso = await Caso.findAll({
-        where: {
-          nombre_paciente: entrada2,
-          estado: "Inactivo",
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-      const casosFormateados = caso.map((c) => {
-        return {
-          nombre_paciente: c.nombre_paciente,
-          id_usuario: c.Usuario.nombre_completo,
-          fecha_creacion: c.fecha_creacion,
-          estado: c.estado,
-          numero_caso: c.numero_caso,
-        };
-      });
-      res.json(casosFormateados);
-    } else if (seleccion2 === "Estado") {
-      const caso = await Caso.findAll({
-        where: {
-          estado: entrada2,
-          estado: "Inactivo",
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-      const casosFormateados = caso.map((c) => {
-        return {
-          nombre_paciente: c.nombre_paciente,
-          id_usuario: c.Usuario.nombre_completo,
-          fecha_creacion: c.fecha_creacion,
-          estado: c.estado,
-          numero_caso: c.numero_caso,
-        };
-      });
-      res.json(casosFormateados);
-    } else if (seleccion2 === "Fecha") {
-      const caso = await Caso.findAll({
-        where: {
-          fecha_creacion: entrada2,
-          estado: "Inactivo",
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-      const casosFormateados = caso.map((c) => {
-        return {
-          nombre_paciente: c.nombre_paciente,
-          id_usuario: c.Usuario.nombre_completo,
-          fecha_creacion: c.fecha_creacion,
-          estado: c.estado,
-          numero_caso: c.numero_caso,
-        };
-      });
-      res.json(casosFormateados);
-    } else if (seleccion2 === "Médico Forense") {
-      const usuario = await Usuario.findOne({
-        attributes: ["id"],
-        where: {
-          nombre_completo: entrada2,
-        },
-      });
-
-      const caso = await Caso.findAll({
-        where: {
-          id_usuario: usuario.id,
-          estado: "Inactivo",
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-      const casosFormateados = caso.map((c) => {
-        return {
-          nombre_paciente: c.nombre_paciente,
-          id_usuario: c.Usuario.nombre_completo,
-          fecha_creacion: c.fecha_creacion,
-          estado: c.estado,
-          numero_caso: c.numero_caso,
-        };
-      });
-      res.json(casosFormateados);
-    }
-  } catch (error) {
-    console.error("Error al buscar los casos:", error);
-    res.status(500).json({ error: "Error interno del servidor" });
-  }
-});
-/* CONSULTA POR BASE DE DATOS
-router.get("/casos-inactivos", async (req, res) => {
-  try {
-    const { numCaso } = req.query;
-    let caso = "";
-    if (!numCaso) {
-      caso = await Caso.findAll({
-        where: {
-          estado: "Inactivo",
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-    } else {
-      caso = await Caso.findAll({
-        where: {
-          numero_caso: numCaso,
-        },
-        include: [
-          {
-            model: Usuario,
-            attributes: ["nombre_completo"],
-          },
-        ],
-      });
-    }
-    const casosFormateados = caso.map((c) => {
-      return {
-        nombre_paciente: c.nombre_paciente,
-        id_usuario: c.Usuario.nombre_completo,
-        fecha_creacion: c.fecha_creacion,
-        estado: c.estado,
-        numero_caso: c.numero_caso,
-      };
+    const { seleccion2, entrada2, userId } = req.body;
+    //Obtiene información de un usuario en la base de datos postgres
+    const usuario = await Usuario.findOne({
+      where: {
+        id: userId,
+      },
+      attributes: ["certificatepath", "mspid", "privatekeypath"],
     });
-    res.json(casosFormateados);
+
+    const mspId = usuario.dataValues.mspid;
+    const certificatepath = usuario.dataValues.certificatepath;
+    const prvtKeyPath = usuario.dataValues.privatekeypath;
+
+    let transactionResponse = "";
+    const args = [seleccion2, entrada2, "Cerrado"];
+
+    //CONSULTA A RED BLOCKCHAIN
+    transactionResponse = await connection.queryTransaction(
+      "blockchain_medicina_forense",
+      "consultarCasosPorFiltro",
+      mspId,
+      certificatepath,
+      prvtKeyPath,
+      ...args
+    );
+
+    const responseString = Buffer.from(transactionResponse).toString("utf8");
+    const jsonData = JSON.parse(responseString);
+    console.log(seleccion2 + " " + entrada2);
+
+    const ids = jsonData
+      .map((item) => item.idUsuario)
+      .filter((idUsuario) => idUsuario !== undefined);
+
+    for (const id of ids) {
+      // Obtenemos el nombre completo del usuario
+      const nom_res = await Usuario.findOne({
+        where: { id: id },
+        attributes: ["nombre_completo"],
+      });
+
+      // Actualizamos el JSON original con el nombre completo
+      jsonData.forEach((item) => {
+        if (item.idUsuario === id) {
+          item.idUsuario = nom_res
+            ? nom_res.nombre_completo
+            : "Usuario no encontrado";
+        }
+      });
+    }
+
+    console.log(jsonData)
+
+    res.json({
+      message: "Casos obtenidos exitosamente",
+      transactionResponse: jsonData,
+    });
   } catch (error) {
     console.error("Error al buscar los casos:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-*/
+
 
 router.get("/casos-inactivos", async (req, res) => {
   const { userId, numCaso } = req.query;
@@ -432,7 +222,7 @@ router.get("/casos-inactivos", async (req, res) => {
     where: {
       id: userId,
     },
-    attributes: ['certificatepath', 'mspid', 'privatekeypath']
+    attributes: ["certificatepath", "mspid", "privatekeypath"],
   });
 
   const mspId = usuario.dataValues.mspid;
@@ -473,7 +263,26 @@ router.get("/casos-inactivos", async (req, res) => {
   const responseString = Buffer.from(transactionResponse).toString("utf8");
   const jsonData = JSON.parse(responseString);
 
-  console.log(jsonData);
+  const ids = jsonData
+    .map((item) => item.idUsuario)
+    .filter((idUsuario) => idUsuario !== undefined);
+
+  for (const id of ids) {
+    // Obtenemos el nombre completo del usuario
+    const nom_res = await Usuario.findOne({
+      where: { id: id },
+      attributes: ["nombre_completo"],
+    });
+
+    // Actualizamos el JSON original con el nombre completo
+    jsonData.forEach((item) => {
+      if (item.idUsuario === id) {
+        item.idUsuario = nom_res
+          ? nom_res.nombre_completo
+          : "Usuario no encontrado";
+      }
+    });
+  }
 
   res.json({
     message: "Casos obtenidos exitosamente",
@@ -485,19 +294,22 @@ router.post("/crear-caso", async (req, res) => {
   try {
     const today = new Date();
     const year = today.getFullYear();
-    const month = today.getMonth() + 1;
-    const day = today.getDate();
-    const fullDay = year + "-" + month + "-" + day;
-
+    let month = today.getMonth() + 1;
+    month = month.toString().length === 1 ? "0" + month : month;
+    let day = today.getDate();
+    day = day.toString().length === 1 ? "0" + day : day;
+    let fullDay = "";
+    fullDay = year + "-" + month + "-" + day;
+    
     const { paciente, caso, responsable } = req.body;
     const id = fs.readFileSync("src/config/ids.txt", "utf8");
-    const nuevoCaso = [id, paciente, fullDay, "Activo", responsable];
+    const nuevoCaso = [id, caso, paciente, fullDay, "Activo", responsable];
 
     const usuario = await Usuario.findOne({
       where: {
         id: responsable,
       },
-      attributes: ['certificatepath', 'mspid', 'privatekeypath']
+      attributes: ["certificatepath", "mspid", "privatekeypath"],
     });
 
     const mspId = usuario.dataValues.mspid;
@@ -528,8 +340,8 @@ router.post("/crear-caso", async (req, res) => {
 
 router.post("/cerrar-caso", async (req, res) => {
   try {
-    const { caso, des, responsable} = req.body;
-    console.log(caso)
+    const { caso, des, responsable } = req.body;
+    console.log(caso);
 
     const nuevoCaso = [caso, "estado", "Cerrado"];
 

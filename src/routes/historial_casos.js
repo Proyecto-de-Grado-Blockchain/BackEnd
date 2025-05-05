@@ -22,7 +22,7 @@ router.post("/crear-historia", async (req, res) => {
       where: {
         id: userR,
       },
-      attributes: ['certificatepath', 'mspid', 'privatekeypath']
+      attributes: ["certificatepath", "mspid", "privatekeypath"],
     });
 
     const mspId = usuario.dataValues.mspid;
@@ -31,7 +31,14 @@ router.post("/crear-historia", async (req, res) => {
 
     const id = fs.readFileSync("src/config/ids.txt", "utf8");
 
-    const nuevoHistorial = [id, req.body.caso, fullDay, req.body.des, "", userR];
+    const nuevoHistorial = [
+      id,
+      req.body.caso,
+      fullDay,
+      req.body.des,
+      "",
+      userR,
+    ];
 
     const transactionResponse = await connection.submitTransaction(
       "blockchain_medicina_forense",
@@ -66,7 +73,7 @@ router.get("/consultar-historia", async (req, res) => {
       where: {
         id: userId,
       },
-      attributes: ['certificatepath', 'mspid', 'privatekeypath']
+      attributes: ["certificatepath", "mspid", "privatekeypath"],
     });
 
     const mspId = usuario.dataValues.mspid;
@@ -87,6 +94,28 @@ router.get("/consultar-historia", async (req, res) => {
     //Trasnforma la respuesta del chaincode a string y a JSON
     const responseString = Buffer.from(transactionResponse).toString("utf8");
     const jsonData = JSON.parse(responseString);
+
+    const ids = jsonData
+      .map((item) => item.usuarioResponsable)
+      .filter((usuarioResponsable) => usuarioResponsable !== undefined);
+
+    for (const id of ids) {
+      // Obtenemos el nombre completo del usuario
+      const nom_res = await Usuario.findOne({
+        where: { id: id },
+        attributes: ["nombre_completo"],
+      });
+
+      // Actualizamos el JSON original con el nombre completo
+      jsonData.forEach((item) => {
+        if (item.usuarioResponsable === id) {
+          item.usuarioResponsable = nom_res
+            ? nom_res.nombre_completo
+            : "Usuario no encontrado";
+        }
+      });
+    }
+    
     res.json({
       message: "Historial consultada y transacción completada exitosamente",
       transactionResponse: jsonData,
