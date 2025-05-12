@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const fs = require("fs");
 const { Caso, Usuario, HistorialCaso } = require("../db/models");
 const connection = require("../config/transactionHandler");
+let path = "/tmp/"
 
 router.use(express.json());
 
@@ -28,6 +29,26 @@ router.post("/crear-historia", async (req, res) => {
     const mspId = usuario.dataValues.mspid;
     const certificatepath = usuario.dataValues.certificatepath;
     const prvtKeyPath = usuario.dataValues.privatekeypath;
+
+    const newHash = crypto
+      .createHash("sha256")
+      .update(mspId)
+      .digest("hex");
+
+    let storedHash = null;
+    // Leer el hash almacenado si el archivo existe
+    if (fs.existsSync(filePath)) {
+      storedHash = fs.readFileSync(filePath, "utf8");
+    }
+
+    if (newHash != storedHash) {
+      return res.status(403).json({ error: "Acceso denegado" });
+    }
+    const hashFisc = crypto.createHash("sha256").update("FiscaliaMSP").digest("hex");
+    // Bloqueo de acceso para Fiscalia
+    if (hashFisc === storedHash) {
+      return res.status(403).json({ error: "Acceso denegado" });
+    }
 
     const id = fs.readFileSync("src/config/ids.txt", "utf8");
 
@@ -68,6 +89,18 @@ router.post("/crear-historia", async (req, res) => {
 router.get("/consultar-historia", async (req, res) => {
   try {
     const { userId, numCaso } = req.query;
+
+    const newHash = crypto.createHash("sha256").update(userId).digest("hex");
+
+    let storedHash = null;
+    // Leer el hash almacenado si el archivo existe
+    if (fs.existsSync(filePath)) {
+      storedHash = fs.readFileSync(filePath, "utf8");
+    }
+
+    if (newHash != storedHash) {
+      return res.status(403).json({ error: "Acceso denegado" });
+    }
 
     const usuario = await Usuario.findOne({
       where: {
@@ -115,7 +148,7 @@ router.get("/consultar-historia", async (req, res) => {
         }
       });
     }
-    
+
     res.json({
       message: "Historial consultada y transacción completada exitosamente",
       transactionResponse: jsonData,

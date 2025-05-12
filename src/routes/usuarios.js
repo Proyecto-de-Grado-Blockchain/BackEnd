@@ -1,8 +1,10 @@
 // routes/usuarios.js
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
 const Usuario = require("../db/models/Usuario");
+const fs = require('fs');
+let path = "/tmp/"
 
 router.use(express.json());
 
@@ -23,7 +25,14 @@ router.post("/login", async (req, res) => {
         correo: correoReq,
         contrasena: contrasenaReq,
       },
+      attributes: ["id", "mspid"]
     });
+
+    // Hashear el valor de mspid
+    const hash = crypto.createHash('sha256').update(usuario.mspid).digest('hex');
+    // Guardar el hash en un archivo
+    const filePath = path + 'hashed_mspid.txt';
+    fs.writeFileSync(filePath, hash, 'utf8');
 
     res.json(usuario);
   } catch (error) {

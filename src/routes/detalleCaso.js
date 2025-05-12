@@ -7,7 +7,8 @@ const crypto = require("crypto");
 const connection = require("../config/transactionHandler");
 const Documento = require("../db/models/Documento");
 const { Caso } = require("../db/models");
-const Usuario = require('../db/models/Usuario'); 
+const Usuario = require("../db/models/Usuario");
+let path = "/tmp/"
 router.use(express.json());
 
 // Configuración de multer para almacenar archivos
@@ -27,6 +28,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
   try {
     // El archivo se ha subido correctamente
     const { tipoArchivo, numCaso, responsable } = req.body;
+
     // Array con los tipos MIME de imágenes
     const imageMimeTypes = [
       "image/jpeg",
@@ -40,10 +42,10 @@ router.post("/upload", upload.single("file"), async (req, res) => {
       "image/heic",
     ];
     console.log(req.file);
-    let hashDoc = ""
-    if (req.file.mimetype === "application/pdf"){
+    let hashDoc = "";
+    if (req.file.mimetype === "application/pdf") {
       hashDoc = await hashPdf(req.file.path);
-    }else if (imageMimeTypes.includes(req.file.mimetype)){
+    } else if (imageMimeTypes.includes(req.file.mimetype)) {
       hashDoc = await hashImage(req.file.path);
     }
     const today = new Date();
@@ -54,13 +56,30 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     const id = fs.readFileSync("src/config/ids.txt", "utf8");
     const usuario = await Usuario.findOne({
       where: {
-          id: responsable
+        id: responsable,
       },
-      attributes: ['certificatepath', 'mspid', 'privatekeypath']
+      attributes: ["certificatepath", "mspid", "privatekeypath"],
     });
     const mspId = usuario.dataValues.mspid;
     const certificatepath = usuario.dataValues.certificatepath;
     const prvtKeyPath = usuario.dataValues.privatekeypath;
+
+    const newHash = crypto.createHash("sha256").update(mspId).digest("hex");
+
+    let storedHash = null;
+    // Leer el hash almacenado si el archivo existe
+    if (fs.existsSync(filePath)) {
+      storedHash = fs.readFileSync(filePath, "utf8");
+    }
+
+    if (newHash != storedHash) {
+      return res.status(403).json({ error: "Acceso denegado" });
+    }
+    const hashFisc = crypto.createHash("sha256").update("FiscaliaMSP").digest("hex");
+    // Bloqueo de acceso para Fiscalia
+    if (hashFisc === storedHash) {
+      return res.status(403).json({ error: "Acceso denegado" });
+    }
 
     const args = [
       id,
@@ -88,7 +107,6 @@ router.post("/upload", upload.single("file"), async (req, res) => {
       file: req.file,
       transactionResponse: transactionResponse,
     });
-
   } catch (error) {
     console.error("Error al subir el archivo:", error);
     res.status(500).json({ message: "Error al subir el archivo" });
@@ -132,20 +150,31 @@ async function hashImage(filePath) {
   }
 }
 
-
 router.get("/obtenerDocumentos", async (req, res) => {
   try {
     const { numCaso, userId } = req.query;
 
     const usuario = await Usuario.findOne({
       where: {
-          id: userId
+        id: userId,
       },
-      attributes: ['certificatepath', 'mspid', 'privatekeypath']
+      attributes: ["certificatepath", "mspid", "privatekeypath"],
     });
     const mspId = usuario.dataValues.mspid;
     const certificatepath = usuario.dataValues.certificatepath;
     const prvtKeyPath = usuario.dataValues.privatekeypath;
+
+    const newHash = crypto.createHash("sha256").update(mspId).digest("hex");
+
+    let storedHash = null;
+    // Leer el hash almacenado si el archivo existe
+    if (fs.existsSync(filePath)) {
+      storedHash = fs.readFileSync(filePath, "utf8");
+    }
+
+    if (newHash != storedHash) {
+      return res.status(403).json({ error: "Acceso denegado" });
+    }
 
     // Llamar a la función de transacción en la blockchain
     const transactionResponse = await connection.queryTransaction(
@@ -157,15 +186,19 @@ router.get("/obtenerDocumentos", async (req, res) => {
       numCaso
     );
 
-    let textResponse = Object.values(transactionResponse).map(code => String.fromCharCode(code)).join('');
+    let textResponse = Object.values(transactionResponse)
+      .map((code) => String.fromCharCode(code))
+      .join("");
     const jsonTextResponse = JSON.parse(textResponse);
-    console.log(jsonTextResponse)
+    console.log(jsonTextResponse);
 
     //Carga el doc a la carpeta uploads
     fs.readdir("/home/administrador/BackEnd/src/uploads", (err, files) => {
       if (err) {
         console.error("Error al leer la carpeta de uploads:", err);
-        return res.status(500).json({ message: "Error al leer la carpeta de uploads." });
+        return res
+          .status(500)
+          .json({ message: "Error al leer la carpeta de uploads." });
       }
 
       // Responder con la información de la transacción y los documentos filtrados
@@ -176,7 +209,9 @@ router.get("/obtenerDocumentos", async (req, res) => {
     });
   } catch (error) {
     console.error("Error al obtener los documentos del caso:", error);
-    res.status(500).json({ message: "Error al obtener los documentos del caso" });
+    res
+      .status(500)
+      .json({ message: "Error al obtener los documentos del caso" });
   }
 });
 
